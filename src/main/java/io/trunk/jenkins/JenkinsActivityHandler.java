@@ -42,7 +42,6 @@ public class JenkinsActivityHandler {
         final var action = run.getAction(TimingAction.class);
         if (action != null) {
 
-
             // Upload events.
             final var inFlightRun = stagingBuffer.get(run.getId());
             final var config = Configuration.get();
