@@ -1,4 +1,4 @@
-package io.trunk.jenkins;
+package io.trunk.jenkins.utils;
 
 import hudson.model.Action;
 import org.jenkinsci.plugins.workflow.actions.LabelAction;
@@ -14,7 +14,7 @@ public class NodeUtil {
     private static final Logger LOG = Logger.getLogger(NodeUtil.class.getName());
     private static final String SYNTHETIC_STAGE_TAG = "SYNTHETIC_STAGE";
 
-    public static boolean isSyntheticStage(FlowNode node) {
+    public static boolean isSyntheticStageNode(FlowNode node) {
         for (Action action : node.getActions()) {
             if (action instanceof TagsAction) {
                 final var tagsAction = (TagsAction) action;
@@ -26,9 +26,8 @@ public class NodeUtil {
         return false;
     }
 
-
     public static boolean isStageNode(FlowNode node) {
-        if (node == null || isSyntheticStage(node)) {
+        if (node == null || isSyntheticStageNode(node)) {
             return false;
         }
         if (node.getAction(StageAction.class) != null) {
@@ -39,6 +38,5 @@ public class NodeUtil {
         }
         return false;
     }
-
 
 }

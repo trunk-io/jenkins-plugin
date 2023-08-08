@@ -5,6 +5,9 @@ import jenkins.model.GlobalConfiguration;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.StaplerRequest;
 
+/**
+ * Type providing global plugin configuration.
+ */
 @Extension
 public class Configuration extends GlobalConfiguration {
     public String token;
@@ -18,7 +21,7 @@ public class Configuration extends GlobalConfiguration {
     }
 
     @Override
-    public boolean configure(StaplerRequest req, JSONObject json) throws FormException {
+    public boolean configure(StaplerRequest req, JSONObject json) {
         req.bindJSON(this, json);
         save();
         return true;

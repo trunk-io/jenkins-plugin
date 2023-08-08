@@ -1,4 +1,4 @@
-package io.trunk.jenkins;
+package io.trunk.jenkins.utils;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.model.TaskListener;
@@ -26,6 +26,5 @@ public class ScmUtil {
         });
         return Collections.singletonList(new Repo("Github", "trunk-io", "trunk"));
     }
-
 
 }

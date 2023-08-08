@@ -1,0 +1,4 @@
+# Java
+target/**/*
+.idea/**/*
+work/**/*

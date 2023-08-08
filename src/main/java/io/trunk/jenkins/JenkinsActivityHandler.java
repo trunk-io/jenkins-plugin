@@ -21,10 +21,10 @@ public class JenkinsActivityHandler {
     public static class InFlightRun {
         final WorkflowRun run;
         final ArrayList<FlowNode> nodes;
-        final PipelineRunAnnotator annotator;
+        final EventAnnotator annotator;
         final long startedAtEpochMs = System.currentTimeMillis();
 
-        public InFlightRun(WorkflowRun run, ArrayList<FlowNode> nodes, PipelineRunAnnotator annotator) {
+        public InFlightRun(WorkflowRun run, ArrayList<FlowNode> nodes, EventAnnotator annotator) {
             this.run = run;
             this.nodes = nodes;
             this.annotator = annotator;
@@ -33,7 +33,7 @@ public class JenkinsActivityHandler {
 
     public void onPipelineStarted(@NonNull WorkflowRun run, List<Repo> repos) {
         run.addAction(new TimingAction());
-        final var inFlightRun = new InFlightRun(run, new ArrayList<>(), new PipelineRunAnnotator(run.getId(), repos));
+        final var inFlightRun = new InFlightRun(run, new ArrayList<>(), new EventAnnotator(run.getId(), repos));
         stagingBuffer.put(run.getId(), inFlightRun);
         LOG.info(String.format("TODO: Pipeline started %s", run.getDisplayName()));
     }
