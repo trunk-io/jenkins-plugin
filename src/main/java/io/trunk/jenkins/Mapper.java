@@ -70,6 +70,22 @@ public class Mapper {
         return hashString(run.getParent().getName());
     }
 
+    private static String makePipelineEventId(@NonNull WorkflowRun run) {
+        return String.format("%s#%s", makePipelineFactKey(run), run.getNumber());
+    }
+
+    private static String makeStageEventId(@NonNull WorkflowRun run, @NonNull FlowNode node) {
+        return String.format("%s#%s", makeStageFactKey(run, node), run.getNumber());
+    }
+
+    private static String makeStageParentEventId(@NonNull WorkflowRun run, @NonNull FlowNode node) {
+        return String.format("%s#%d", makeStageParentFactKey(run, node), run.getNumber());
+    }
+
+    private static String makeChainId(@NonNull WorkflowRun run) {
+        return makePipelineEventId(run);
+    }
+
     /**
      * Returns a list of all parent stages of the given node.
      */
@@ -170,8 +186,8 @@ public class Mapper {
 
     public static ActivityEventForm newPipelineStartedEvent(@NonNull WorkflowRun run) {
         final var event = new ActivityEventForm();
-        event.id = String.format("%s#%d", makePipelineFactKey(run), run.getNumber());
-        event.chainId = event.id;
+        event.id = makePipelineEventId(run);
+        event.chainId = makeChainId(run);
         event.parentId = null; // Pipelines are root events.
         event.kind = ActivityKind.JENKINS;
         event.origin = ORIGIN;
@@ -186,8 +202,8 @@ public class Mapper {
     public static ActivityEventForm newPipelineCompletedEvent(@NonNull WorkflowRun run) {
         final var event = new ActivityEventForm();
         final var now = System.currentTimeMillis();
-        event.id = String.format("%s#%d", makePipelineFactKey(run), run.getNumber());
-        event.chainId = event.id;
+        event.id = makePipelineEventId(run);
+        event.chainId = makeChainId(run);
         event.parentId = null; // Pipelines are root events.
         event.kind = ActivityKind.JENKINS;
         event.origin = ORIGIN;
@@ -203,9 +219,9 @@ public class Mapper {
             @NonNull WorkflowRun run,
             @NonNull FlowNode node) {
         final var event = new ActivityEventForm();
-        event.id = String.format("%s#%d", makeStageFactKey(run, node), run.getNumber());
-        event.chainId = makePipelineFactKey(run);
-        event.parentId = String.format("%s#%d", makeStageParentFactKey(run, node), run.getNumber());
+        event.id = makeStageEventId(run, node);
+        event.chainId = makeChainId(run);
+        event.parentId = makeStageParentEventId(run, node);
         event.kind = ActivityKind.JENKINS;
         event.origin = ORIGIN;
         event.createdAt = Timestamp.fromEpochMs(getTime(node));
@@ -221,9 +237,9 @@ public class Mapper {
             @NonNull FlowNode startNode,
             @NonNull FlowNode endNode) {
         final var event = new ActivityEventForm();
-        event.id = String.format("%s#%d", makeStageFactKey(run, startNode), run.getNumber());
-        event.chainId = makePipelineFactKey(run);
-        event.parentId = String.format("%s#%d", makeStageParentFactKey(run, startNode), run.getNumber());
+        event.id = makeStageEventId(run, startNode);
+        event.chainId = makeChainId(run);
+        event.parentId = makeStageParentEventId(run, startNode);
         event.kind = ActivityKind.JENKINS;
         event.origin = ORIGIN;
         event.createdAt = Timestamp.fromEpochMs(getTime(startNode));
