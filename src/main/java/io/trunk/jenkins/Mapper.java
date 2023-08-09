@@ -25,7 +25,7 @@ import java.util.logging.Logger;
 public class Mapper {
 
     private static final Logger LOG = Logger.getLogger(Mapper.class.getName());
-    private static final String ORIGIN = String.format("jenkins-plugin-%s", VersionUtil.getVersion());
+    private static final String VERSIONED_PLUGIN_ORIGIN = String.format("jenkins-plugin-%s", VersionUtil.getVersion());
 
     private static String hashString(String name) {
         final var h = Blake3.initHash();
@@ -183,14 +183,13 @@ public class Mapper {
         return payload;
     }
 
-
     public static ActivityEventForm newPipelineStartedEvent(@NonNull WorkflowRun run) {
         final var event = new ActivityEventForm();
         event.id = makePipelineEventId(run);
         event.chainId = makeChainId(run);
         event.parentId = null; // Pipelines are root events.
         event.kind = ActivityKind.JENKINS;
-        event.origin = ORIGIN;
+        event.origin = VERSIONED_PLUGIN_ORIGIN;
         event.createdAt = Timestamp.fromEpochMs(run.getStartTimeInMillis());
         event.finishedAt = null;
         event.conclusion = ActivityConclusion.UNSPECIFIED;
@@ -206,7 +205,7 @@ public class Mapper {
         event.chainId = makeChainId(run);
         event.parentId = null; // Pipelines are root events.
         event.kind = ActivityKind.JENKINS;
-        event.origin = ORIGIN;
+        event.origin = VERSIONED_PLUGIN_ORIGIN;
         event.createdAt = Timestamp.fromEpochMs(run.getStartTimeInMillis());
         event.finishedAt = Timestamp.fromEpochMs(now);
         event.conclusion = resultToConclusion(run.getResult());
@@ -223,7 +222,7 @@ public class Mapper {
         event.chainId = makeChainId(run);
         event.parentId = makeStageParentEventId(run, node);
         event.kind = ActivityKind.JENKINS;
-        event.origin = ORIGIN;
+        event.origin = VERSIONED_PLUGIN_ORIGIN;
         event.createdAt = Timestamp.fromEpochMs(getTime(node));
         event.finishedAt = null;
         event.conclusion = ActivityConclusion.UNSPECIFIED;
@@ -241,7 +240,7 @@ public class Mapper {
         event.chainId = makeChainId(run);
         event.parentId = makeStageParentEventId(run, startNode);
         event.kind = ActivityKind.JENKINS;
-        event.origin = ORIGIN;
+        event.origin = VERSIONED_PLUGIN_ORIGIN;
         event.createdAt = Timestamp.fromEpochMs(getTime(startNode));
         event.finishedAt = Timestamp.fromEpochMs(getTime(endNode));
         event.conclusion = endNode.getError() == null ? ActivityConclusion.SUCCESS : ActivityConclusion.FAILURE;
