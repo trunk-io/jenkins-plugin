@@ -92,7 +92,7 @@ public class ActivityHandler {
         final var md = new Metadata(cfg.token);
 
         for (Repo repo : repos) {
-            pool.submit(() -> client.trackEvents(TrackEventsRequest.singleEvent(repo, event), md));
+            pool.submit(() -> client.trackEvents(TrackEventsRequest.forSingleEvent(repo, event), md));
         }
     }
 

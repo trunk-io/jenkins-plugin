@@ -9,14 +9,14 @@ public class TrackEventsRequest {
     public Repo repo;
     public List<ActivityEventForm> events;
 
-    public static TrackEventsRequest singleEvent(Repo repo, ActivityEventForm event) {
+    public static TrackEventsRequest forSingleEvent(Repo repo, ActivityEventForm event) {
         final var body = new TrackEventsRequest();
         body.repo = repo;
         body.events = List.of(event);
         return body;
     }
 
-    public static TrackEventsRequest multipleEvents(Repo repo, List<ActivityEventForm> events) {
+    public static TrackEventsRequest forMultipleEvents(Repo repo, List<ActivityEventForm> events) {
         final var body = new TrackEventsRequest();
         body.repo = repo;
         body.events = events;
