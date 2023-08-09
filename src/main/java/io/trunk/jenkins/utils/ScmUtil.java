@@ -15,6 +15,7 @@ public class ScmUtil {
     private static final Logger LOG = Logger.getLogger(ScmUtil.class.getName());
 
     public static List<Repo> getRepos(@NonNull WorkflowRun run, TaskListener listener) {
+
         run.getSCMs().forEach(scm -> {
             if (scm instanceof GitSCM) {
                 final var git = (GitSCM) scm;
@@ -24,7 +25,8 @@ public class ScmUtil {
                 });
             }
         });
-        return Collections.singletonList(new Repo("Github", "trunk-io", "trunk"));
+
+        return Collections.singletonList(Repo.GithubRepo("trunk-io", "jenkins-plugin"));
     }
 
 }

@@ -11,6 +11,7 @@ import org.kohsuke.stapler.StaplerRequest;
 @Extension
 public class Configuration extends GlobalConfiguration {
     public String token;
+    public String trunkApi;
 
     public Configuration() {
         load();
@@ -27,11 +28,4 @@ public class Configuration extends GlobalConfiguration {
         return true;
     }
 
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
 }

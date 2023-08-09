@@ -5,6 +5,9 @@
         <f:entry title="Organization Token" field="token">
             <f:textbox/>
         </f:entry>
+        <f:entry title="Trunk API" field="trunkApi">
+            <f:textbox default="https://api.trunk-staging.io:443"/>
+        </f:entry>
     </f:section>
 </j:jelly>
 

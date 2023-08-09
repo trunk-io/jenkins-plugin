@@ -1,9 +1,10 @@
-package io.trunk.jenkins;
+package io.trunk.jenkins.listeners;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
 import hudson.model.TaskListener;
 import hudson.model.listeners.RunListener;
+import io.trunk.jenkins.ActivityHandler;
 import io.trunk.jenkins.utils.NodeUtil;
 import io.trunk.jenkins.utils.ScmUtil;
 import org.jenkinsci.plugins.workflow.actions.TimingAction;
@@ -20,7 +21,7 @@ import java.util.logging.Logger;
 public class JenkinsPipelineActivityListener extends RunListener<WorkflowRun> implements GraphListener {
 
     private static final Logger LOG = Logger.getLogger(JenkinsPipelineActivityListener.class.getName());
-    private final JenkinsActivityHandler handler = new JenkinsActivityHandler();
+    private final ActivityHandler handler = new ActivityHandler();
 
     @Override
     public void onStarted(WorkflowRun run, @NonNull TaskListener listener) {
@@ -35,18 +36,18 @@ public class JenkinsPipelineActivityListener extends RunListener<WorkflowRun> im
     }
 
     @Override
-    public void onNewHead(FlowNode node) {
+    public void onNewHead(FlowNode endNode) {
 
-        if (isStartNode(node) && NodeUtil.isStageNode(node)) {
-            handler.onStageStarted(node);
+        if (isStartNode(endNode) && NodeUtil.isStageNode(endNode)) {
+            handler.onStageStarted(endNode);
             return;
         }
 
-        if (isEndNode(node)) {
-            final var startNode = ((BlockEndNode<?>) node).getStartNode();
+        if (isEndNode(endNode)) {
+            final var startNode = ((BlockEndNode<?>) endNode).getStartNode();
             final var timingAction = startNode.getAction(TimingAction.class);
             if (timingAction != null && NodeUtil.isStageNode(startNode)) {
-                handler.onStageCompleted(node);
+                handler.onStageCompleted(startNode, endNode);
             }
         }
     }
