@@ -48,6 +48,10 @@ public class ScmUtil {
             });
         }
 
+        if (repos.isEmpty()) {
+            LOG.warning("No git remotes found");
+            listener.getLogger().println("Trunk plugin requires a git remote to be configured");
+        }
 
         return repos;
     }
