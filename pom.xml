@@ -12,19 +12,14 @@
     </parent>
 
     <groupId>io.trunk.jenkins</groupId>
-
     <artifactId>trunk-io-jenkins-plugin</artifactId>
-
     <version>${revision}${changelist}</version>
-
     <packaging>hpi</packaging>
-
     <name>Trunk Jenkins Plugin</name>
-
     <url>https://trunk.io</url>
 
     <licenses>
-        <!-- TODO -->
+        <!-- TODO(TRUNK-8304): add license and make plugin public -->
     </licenses>
 
     <properties>
@@ -32,6 +27,7 @@
         <changelist>-SNAPSHOT</changelist>
         <jenkins.version>2.387.3</jenkins.version>
         <spotless.check.skip>true</spotless.check.skip>
+        <enforcer.skip>true</enforcer.skip>
     </properties>
 
     <dependencyManagement>
@@ -70,6 +66,12 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>git</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.coravy.hudson.plugins.github</groupId>
+            <artifactId>github</artifactId>
+            <version>1.37.2</version>
         </dependency>
 
         <dependency>
