@@ -156,7 +156,7 @@ public class Mapper {
             @NonNull FlowNode startNode,
             @Nullable FlowNode endNode) {
         final var payload = new ActivityPayloadForm();
-        final var duration = endNode == null ? 0 : getTime(startNode) - getTime(endNode);
+        final var duration = endNode == null ? 0 : getTime(endNode) - getTime(startNode);
         payload.tagsString = Collections.emptyList();
         payload.metrics = Collections.singletonList(new ActivityMetricForm("duration_ms", duration));
         payload.tagsInt64 = Collections.singletonList(new ActivityIntegerTagForm("build", run.getNumber()));
