@@ -11,7 +11,7 @@ public class Repo {
         this.name = name;
     }
 
-    public static Repo GithubRepo(String owner, String name) {
+    public static Repo githubRepo(String owner, String name) {
         return new Repo("github.com", owner, name);
     }
 }

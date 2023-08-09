@@ -26,7 +26,7 @@ public class ScmUtil {
             }
         });
 
-        return Collections.singletonList(Repo.GithubRepo("trunk-io", "jenkins-plugin"));
+        return Collections.singletonList(Repo.githubRepo("trunk-io", "jenkins-plugin"));
     }
 
 }
