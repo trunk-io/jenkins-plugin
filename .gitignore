@@ -1,0 +1,7 @@
+# Java
+target/**/*
+.idea/**/*
+work/**/*
+
+# OSX
+.DS_Store
