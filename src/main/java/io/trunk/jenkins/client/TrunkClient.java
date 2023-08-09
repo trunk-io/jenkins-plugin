@@ -44,7 +44,5 @@ public class TrunkClient {
         } catch (IOException e) {
             LOG.warning(String.format("Failed to upload event to Trunk: %s", e.getMessage()));
         }
-
     }
-
 }
