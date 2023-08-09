@@ -27,5 +27,4 @@ public class Configuration extends GlobalConfiguration {
         save();
         return true;
     }
-
 }

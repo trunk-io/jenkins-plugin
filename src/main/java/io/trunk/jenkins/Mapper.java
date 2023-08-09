@@ -151,7 +151,10 @@ public class Mapper {
         return fact;
     }
 
-    private static ActivityPayloadForm makeStageActivityEventPayloadForm(@NonNull WorkflowRun run, @NonNull FlowNode startNode, @Nullable FlowNode endNode) {
+    private static ActivityPayloadForm makeStageActivityEventPayloadForm(
+            @NonNull WorkflowRun run,
+            @NonNull FlowNode startNode,
+            @Nullable FlowNode endNode) {
         final var payload = new ActivityPayloadForm();
         final var duration = endNode == null ? 0 : getTime(startNode) - getTime(endNode);
         payload.tagsString = Collections.emptyList();
@@ -196,7 +199,9 @@ public class Mapper {
         return event;
     }
 
-    public static ActivityEventForm newStageStartedEvent(@NonNull WorkflowRun run, @NonNull FlowNode node) {
+    public static ActivityEventForm newStageStartedEvent(
+            @NonNull WorkflowRun run,
+            @NonNull FlowNode node) {
         final var event = new ActivityEventForm();
         event.id = String.format("%s#%d", makeStageFactKey(run, node), run.getNumber());
         event.chainId = makePipelineFactKey(run);
@@ -211,7 +216,10 @@ public class Mapper {
         return event;
     }
 
-    public static ActivityEventForm newStageCompletedEvent(@NonNull WorkflowRun run, @NonNull FlowNode startNode, @NonNull FlowNode endNode) {
+    public static ActivityEventForm newStageCompletedEvent(
+            @NonNull WorkflowRun run,
+            @NonNull FlowNode startNode,
+            @NonNull FlowNode endNode) {
         final var event = new ActivityEventForm();
         event.id = String.format("%s#%d", makeStageFactKey(run, startNode), run.getNumber());
         event.chainId = makePipelineFactKey(run);

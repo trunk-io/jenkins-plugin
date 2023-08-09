@@ -38,7 +38,6 @@ public class ActivityHandler {
         repos.forEach((repo) -> {
             client.trackEvents(TrackEventsRequest.singleEvent(repo, event), md);
         });
-
     }
 
     public void onPipelineCompleted(@NonNull WorkflowRun run) {
@@ -100,11 +99,8 @@ public class ActivityHandler {
             repos.forEach((repo) -> {
                 client.trackEvents(TrackEventsRequest.singleEvent(repo, event), md);
             });
-
         } catch (IOException e) {
             LOG.warning(e.getMessage());
         }
     }
-
-
 }
