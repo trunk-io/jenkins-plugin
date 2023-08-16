@@ -1,10 +1,16 @@
 package io.trunk.jenkins.model.event;
 
+import org.immutables.value.Value;
+
 import java.util.List;
 
-public class ActivityPayloadForm {
-    public List<ActivityMetricForm> metrics;
-    public List<ActivityIntegerTagForm> tagsInt64;
-    public List<ActivityStringTagForm> tagsString;
-    public List<ActivityTimestampForm> timestamps;
+@Value.Immutable
+public interface ActivityPayloadForm {
+    List<ActivityMetricForm> metrics();
+
+    List<ActivityIntegerTagForm> tagsInt64();
+
+    List<ActivityStringTagForm> tagsString();
+
+    List<ActivityTimestampForm> timestamps();
 }

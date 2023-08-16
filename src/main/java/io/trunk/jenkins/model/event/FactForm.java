@@ -1,7 +1,10 @@
 package io.trunk.jenkins.model.event;
 
-public class FactForm {
-    public String key;
-    public String name;
-    public FactPayloadForm payload;
+import org.immutables.value.Value;
+
+@Value.Immutable
+public interface FactForm {
+    String key();
+    String name();
+    FactPayloadForm payload();
 }

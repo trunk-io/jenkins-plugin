@@ -1,13 +1,18 @@
 package io.trunk.jenkins.model.event;
 
 import io.trunk.jenkins.model.Timestamp;
+import org.immutables.value.Value;
 
-public class ActivityTimestampForm {
-    public String k;
-    public Timestamp v;
+@Value.Immutable
+public interface ActivityTimestampForm {
+    String k();
 
-    public ActivityTimestampForm(String k, Timestamp v) {
-        this.k = k;
-        this.v = v;
+    Timestamp v();
+
+    static ActivityTimestampForm make(String k, Timestamp v) {
+        return ImmutableActivityTimestampForm.builder()
+                .k(k)
+                .v(v)
+                .build();
     }
 }
