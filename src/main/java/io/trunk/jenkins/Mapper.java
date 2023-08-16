@@ -123,10 +123,10 @@ public class Mapper {
 
     private static String makeStageParentFactKey(WorkflowRun run, FlowNode node) {
         final var parents = getParentStages(node);
-        if (parents.size() > 1) {
-            return makeStageFactKey(run, parents.get(0));
+        if (parents.isEmpty()) {
+            return makePipelineFactKey(run);
         }
-        return makePipelineFactKey(run);
+        return makeStageFactKey(run, parents.get(0));
     }
 
     public static FactForm makePipelineFactForm(@NonNull WorkflowRun run) {
