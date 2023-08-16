@@ -1,8 +1,14 @@
 package io.trunk.jenkins.model;
 
-public class Metadata {
-    public String token;
-    public Metadata(String token) {
-        this.token = token;
+import org.immutables.value.Value;
+
+@Value.Immutable
+public interface Metadata {
+    String token();
+
+    static Metadata make(String token) {
+        return ImmutableMetadata.builder()
+                .token(token)
+                .build();
     }
 }

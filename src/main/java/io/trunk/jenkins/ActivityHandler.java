@@ -89,7 +89,7 @@ public class ActivityHandler {
 
         final var cfg = Configuration.get();
         final var client = new TrunkClient(http, gson, cfg.trunkApi);
-        final var md = new Metadata(cfg.token);
+        final var md = Metadata.make(cfg.token);
 
         for (Repo repo : repos) {
             pool.submit(() -> client.trackEvents(TrackEventsRequest.forSingleEvent(repo, event), md));

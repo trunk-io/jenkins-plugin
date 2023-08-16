@@ -32,7 +32,7 @@ public class TrunkClient {
         final var body = this.gson.toJson(req);
         final var httpReq = new Request.Builder()
                 .url(rpcUrl)
-                .header("x-api-token", md.token)
+                .header("x-api-token", md.token())
                 .header("x-source", SOURCE)
                 .post(RequestBody.create(body, MEDIA_TYPE_JSON))
                 .build();
