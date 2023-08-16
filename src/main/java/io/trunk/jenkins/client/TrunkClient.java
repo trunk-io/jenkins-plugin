@@ -38,8 +38,11 @@ public class TrunkClient {
                 .build();
         try (final var resp = this.inner.newCall(httpReq).execute()) {
             if (!resp.isSuccessful()) {
-                final var respText = resp.body() != null ? resp.body().string() : "";
-                LOG.info(String.format("Successfully uploaded event to Trunk: %s", respText));
+                if (resp.body() != null) {
+                    LOG.warning(String.format("Failed to upload event to Trunk: %s", resp.body().string()));
+                } else {
+                    LOG.warning(String.format("Failed to upload event to Trunk: %s", resp.message()));
+                }
             }
         } catch (IOException e) {
             LOG.warning(String.format("Failed to upload event to Trunk: %s", e.getMessage()));
