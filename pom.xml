@@ -16,6 +16,7 @@
     <version>${revision}${changelist}</version>
     <packaging>hpi</packaging>
     <name>Trunk Jenkins Plugin</name>
+    <description>Provide integration with Trunk CI Analytics.</description>
     <url>https://trunk.io</url>
 
     <licenses>
@@ -23,12 +24,17 @@
     </licenses>
 
     <properties>
-        <revision>1.0</revision>
-        <changelist>-SNAPSHOT</changelist>
+        <revision>0.1.0</revision>
+        <changelist>-DEV</changelist>
         <jenkins.version>2.387.3</jenkins.version>
         <spotless.check.skip>true</spotless.check.skip>
         <enforcer.skip>true</enforcer.skip>
     </properties>
+
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/trunk-io/jenkins-plugin/issues</url>
+    </issueManagement>
 
     <dependencyManagement>
         <dependencies>
@@ -72,6 +78,12 @@
             <groupId>com.coravy.hudson.plugins.github</groupId>
             <artifactId>github</artifactId>
             <version>1.37.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-model</artifactId>
+            <version>3.9.4</version>
         </dependency>
 
         <dependency>
