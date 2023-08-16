@@ -2,24 +2,26 @@ package io.trunk.jenkins.model.service;
 
 import io.trunk.jenkins.model.Repo;
 import io.trunk.jenkins.model.event.ActivityEventForm;
+import org.immutables.value.Value;
 
 import java.util.List;
 
-public class TrackEventsRequest {
-    public Repo repo;
-    public List<ActivityEventForm> events;
+@Value.Immutable
+public interface TrackEventsRequest {
+    Repo repo();
+    List<ActivityEventForm> events();
 
-    public static TrackEventsRequest forSingleEvent(Repo repo, ActivityEventForm event) {
-        final var body = new TrackEventsRequest();
-        body.repo = repo;
-        body.events = List.of(event);
-        return body;
+    static TrackEventsRequest forSingleEvent(Repo repo, ActivityEventForm event) {
+        return ImmutableTrackEventsRequest.builder()
+                .repo(repo)
+                .events(List.of(event))
+                .build();
     }
 
-    public static TrackEventsRequest forMultipleEvents(Repo repo, List<ActivityEventForm> events) {
-        final var body = new TrackEventsRequest();
-        body.repo = repo;
-        body.events = events;
-        return body;
+    static TrackEventsRequest forMultipleEvents(Repo repo, List<ActivityEventForm> events) {
+        return ImmutableTrackEventsRequest.builder()
+                .repo(repo)
+                .events(events)
+                .build();
     }
 }

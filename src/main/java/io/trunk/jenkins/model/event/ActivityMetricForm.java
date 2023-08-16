@@ -1,11 +1,17 @@
 package io.trunk.jenkins.model.event;
 
-public class ActivityMetricForm {
-    public String k;
-    public double v;
+import org.immutables.value.Value;
 
-    public ActivityMetricForm(String k, double v) {
-        this.k = k;
-        this.v = v;
+@Value.Immutable
+public interface ActivityMetricForm {
+    String k();
+
+    double v();
+
+    static ActivityMetricForm make(String k, double v) {
+        return ImmutableActivityMetricForm.builder()
+                .k(k)
+                .v(v)
+                .build();
     }
 }

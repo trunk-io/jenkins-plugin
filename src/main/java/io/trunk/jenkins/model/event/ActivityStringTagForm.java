@@ -1,11 +1,17 @@
 package io.trunk.jenkins.model.event;
 
-public class ActivityStringTagForm {
-    public String k;
-    public String v;
+import org.immutables.value.Value;
 
-    public ActivityStringTagForm(String k, String v) {
-        this.k = k;
-        this.v = v;
+@Value.Immutable
+public interface ActivityStringTagForm {
+    String k();
+
+    String v();
+
+    static ActivityStringTagForm make(String k, String v) {
+        return ImmutableActivityStringTagForm.builder()
+                .k(k)
+                .v(v)
+                .build();
     }
 }

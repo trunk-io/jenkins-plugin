@@ -1,21 +1,22 @@
 package io.trunk.jenkins.model;
 
-public class Repo {
-    public final String host;
-    public final String owner;
-    public final String name;
+import org.immutables.value.Value;
 
-    public Repo(String host, String owner, String name) {
-        this.host = host;
-        this.owner = owner;
-        this.name = name;
+@Value.Immutable
+public interface Repo {
+    String host();
+    String owner();
+    String name();
+
+    static Repo github(String owner, String name) {
+        return ImmutableRepo.builder()
+                .host("github.com")
+                .owner(owner)
+                .name(name)
+                .build();
     }
 
-    public static Repo githubRepo(String owner, String name) {
-        return new Repo("github.com", owner, name);
-    }
-
-    public static Repo fromGitUrl(String gitRepoUrl) {
+    static Repo fromGitUrl(String gitRepoUrl) {
         String[] parts = gitRepoUrl.split("/");
         if (parts.length != 5) {
             throw new IllegalArgumentException("Invalid repo URL: " + gitRepoUrl);
@@ -32,6 +33,10 @@ public class Repo {
         final var owner = parts[3];
         final var name = parts[4].replace(".git", "");
 
-        return new Repo(host, owner, name);
+        return ImmutableRepo.builder()
+                .host(host)
+                .owner(owner)
+                .name(name)
+                .build();
     }
 }

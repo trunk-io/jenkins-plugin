@@ -32,14 +32,18 @@ public class TrunkClient {
         final var body = this.gson.toJson(req);
         final var httpReq = new Request.Builder()
                 .url(rpcUrl)
-                .header("x-api-token", md.token)
+                .header("x-api-token", md.token())
                 .header("x-source", SOURCE)
                 .post(RequestBody.create(body, MEDIA_TYPE_JSON))
                 .build();
         try (final var resp = this.inner.newCall(httpReq).execute()) {
             if (!resp.isSuccessful()) {
-                final var respText = resp.body() != null ? resp.body().string() : "";
-                LOG.info(String.format("Successfully uploaded event to Trunk: %s", respText));
+                final var respBody = resp.body();
+                if (respBody != null) {
+                    LOG.warning(String.format("Failed to upload event to Trunk: %s", respBody.string()));
+                } else {
+                    LOG.warning(String.format("Failed to upload event to Trunk: %s", resp.message()));
+                }
             }
         } catch (IOException e) {
             LOG.warning(String.format("Failed to upload event to Trunk: %s", e.getMessage()));

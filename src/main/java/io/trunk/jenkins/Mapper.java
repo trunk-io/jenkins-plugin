@@ -131,122 +131,116 @@ public class Mapper {
 
     public static FactForm makePipelineFactForm(@NonNull WorkflowRun run) {
         final var url = String.format("%s%s", Jenkins.get().getRootUrl(), run.getParent().getUrl());
-        final var fact = new FactForm();
-        fact.key = makePipelineFactKey(run);
-        fact.name = run.getParent().getName();
-        fact.payload = new FactPayloadForm();
-        fact.payload.tagsString = Collections.singletonList(new ActivityStringTagForm("url", url));
-        fact.payload.tagsInt64 = Collections.emptyList();
-        return fact;
+        return ImmutableFactForm.builder()
+                .key(makePipelineFactKey(run))
+                .name(run.getParent().getName())
+                .payload(ImmutableFactPayloadForm.builder()
+                        .tagsString(Collections.singletonList(ActivityStringTagForm.make("url", url)))
+                        .tagsInt64(Collections.emptyList())
+                        .build())
+                .build();
     }
 
     public static ActivityPayloadForm makePipelineActivityEventPayloadForm(@NonNull WorkflowRun run) {
-        final var payload = new ActivityPayloadForm();
         final var now = System.currentTimeMillis();
         final var duration = run.getResult() == null ? 0 : now - run.getStartTimeInMillis();
-        payload.tagsString = Collections.emptyList();
-        payload.metrics = Collections.singletonList(new ActivityMetricForm("duration_ms", duration));
-        payload.tagsInt64 = Collections.singletonList(new ActivityIntegerTagForm("build", run.getNumber()));
-        payload.tagsString = List.of(
-                new ActivityStringTagForm("title", run.getDisplayName()),
-                new ActivityStringTagForm("url", run.getUrl())
-        );
-        return payload;
+        return ImmutableActivityPayloadForm.builder()
+                .tagsString(Collections.emptyList())
+                .metrics(Collections.singletonList(ActivityMetricForm.make("duration_ms", duration)))
+                .tagsInt64(Collections.singletonList(ActivityIntegerTagForm.make("build", run.getNumber())))
+                .tagsString(List.of(
+                        ActivityStringTagForm.make("title", run.getDisplayName()),
+                        ActivityStringTagForm.make("url", run.getUrl())
+                )).build();
     }
 
     private static FactForm makeStageFactForm(@NonNull WorkflowRun run, @NonNull FlowNode startNode) {
         final var url = String.format("%s%s", Jenkins.get().getRootUrl(), run.getParent().getUrl());
-        final var fact = new FactForm();
-        fact.key = makeStageFactKey(run, startNode);
-        fact.name = startNode.getDisplayName();
-        fact.payload = new FactPayloadForm();
-        fact.payload.tagsString = List.of(
-                new ActivityStringTagForm("url", url)
-        );
-        fact.payload.tagsInt64 = Collections.emptyList();
-        return fact;
+        return ImmutableFactForm.builder()
+                .key(makeStageFactKey(run, startNode))
+                .name(startNode.getDisplayName())
+                .payload(ImmutableFactPayloadForm.builder()
+                        .tagsString(Collections.singletonList(ActivityStringTagForm.make("url", url)))
+                        .tagsInt64(Collections.emptyList())
+                        .build())
+                .build();
     }
 
     private static ActivityPayloadForm makeStageActivityEventPayloadForm(
             @NonNull WorkflowRun run,
             @NonNull FlowNode startNode,
             @Nullable FlowNode endNode) {
-        final var payload = new ActivityPayloadForm();
         final var duration = endNode == null ? 0 : getTime(endNode) - getTime(startNode);
-        payload.tagsString = Collections.emptyList();
-        payload.metrics = Collections.singletonList(new ActivityMetricForm("duration_ms", duration));
-        payload.tagsInt64 = Collections.singletonList(new ActivityIntegerTagForm("build", run.getNumber()));
-        payload.tagsString = List.of(
-                new ActivityStringTagForm("path", getFullPath(run, startNode)),
-                new ActivityStringTagForm("title", startNode.getDisplayName())
-        );
-        return payload;
+        return ImmutableActivityPayloadForm.builder()
+                .tagsString(Collections.emptyList())
+                .metrics(Collections.singletonList(ActivityMetricForm.make("duration_ms", duration)))
+                .tagsInt64(Collections.singletonList(ActivityIntegerTagForm.make("build", run.getNumber())))
+                .tagsString(List.of(
+                        ActivityStringTagForm.make("path", getFullPath(run, startNode)),
+                        ActivityStringTagForm.make("title", startNode.getDisplayName())
+                )).build();
     }
 
     public static ActivityEventForm newPipelineStartedEvent(@NonNull WorkflowRun run) {
-        final var event = new ActivityEventForm();
-        event.id = makePipelineEventId(run);
-        event.chainId = makeChainId(run);
-        event.parentId = null; // Pipelines are root events.
-        event.kind = ActivityKind.JENKINS;
-        event.origin = VERSIONED_PLUGIN_ORIGIN;
-        event.createdAt = Timestamp.fromEpochMs(run.getStartTimeInMillis());
-        event.finishedAt = null;
-        event.conclusion = ActivityConclusion.UNSPECIFIED;
-        event.payload = makePipelineActivityEventPayloadForm(run);
-        event.fact = makePipelineFactForm(run);
-        return event;
+        return ImmutableActivityEventForm.builder()
+                .id(makePipelineEventId(run))
+                .chainId(makeChainId(run))
+                .kind(ActivityKind.JENKINS)
+                .origin(VERSIONED_PLUGIN_ORIGIN)
+                .createdAt(Timestamp.fromEpochMs(run.getStartTimeInMillis()))
+                .conclusion(ActivityConclusion.UNSPECIFIED)
+                .payload(makePipelineActivityEventPayloadForm(run))
+                .fact(makePipelineFactForm(run))
+                .build();
     }
 
     public static ActivityEventForm newPipelineCompletedEvent(@NonNull WorkflowRun run) {
-        final var event = new ActivityEventForm();
         final var now = System.currentTimeMillis();
-        event.id = makePipelineEventId(run);
-        event.chainId = makeChainId(run);
-        event.parentId = null; // Pipelines are root events.
-        event.kind = ActivityKind.JENKINS;
-        event.origin = VERSIONED_PLUGIN_ORIGIN;
-        event.createdAt = Timestamp.fromEpochMs(run.getStartTimeInMillis());
-        event.finishedAt = Timestamp.fromEpochMs(now);
-        event.conclusion = resultToConclusion(run.getResult());
-        event.payload = makePipelineActivityEventPayloadForm(run);
-        event.fact = makePipelineFactForm(run);
-        return event;
+        return ImmutableActivityEventForm.builder()
+                .id(makePipelineEventId(run))
+                .chainId(makeChainId(run))
+                .kind(ActivityKind.JENKINS)
+                .origin(VERSIONED_PLUGIN_ORIGIN)
+                .createdAt(Timestamp.fromEpochMs(run.getStartTimeInMillis()))
+                .finishedAt(Timestamp.fromEpochMs(now))
+                .conclusion(resultToConclusion(run.getResult()))
+                .payload(makePipelineActivityEventPayloadForm(run))
+                .fact(makePipelineFactForm(run))
+                .build();
     }
 
     public static ActivityEventForm newStageStartedEvent(
             @NonNull WorkflowRun run,
             @NonNull FlowNode node) {
-        final var event = new ActivityEventForm();
-        event.id = makeStageEventId(run, node);
-        event.chainId = makeChainId(run);
-        event.parentId = makeStageParentEventId(run, node);
-        event.kind = ActivityKind.JENKINS;
-        event.origin = VERSIONED_PLUGIN_ORIGIN;
-        event.createdAt = Timestamp.fromEpochMs(getTime(node));
-        event.finishedAt = null;
-        event.conclusion = ActivityConclusion.UNSPECIFIED;
-        event.payload = makeStageActivityEventPayloadForm(run, node, null);
-        event.fact = makeStageFactForm(run, node);
-        return event;
+        return ImmutableActivityEventForm.builder()
+                .id(makeStageEventId(run, node))
+                .chainId(makeChainId(run))
+                .parentId(makeStageParentEventId(run, node))
+                .kind(ActivityKind.JENKINS)
+                .origin(VERSIONED_PLUGIN_ORIGIN)
+                .createdAt(Timestamp.fromEpochMs(getTime(node)))
+                .conclusion(ActivityConclusion.UNSPECIFIED)
+                .payload(makeStageActivityEventPayloadForm(run, node, null))
+                .fact(makeStageFactForm(run, node))
+                .build();
     }
 
     public static ActivityEventForm newStageCompletedEvent(
             @NonNull WorkflowRun run,
             @NonNull FlowNode startNode,
             @NonNull FlowNode endNode) {
-        final var event = new ActivityEventForm();
-        event.id = makeStageEventId(run, startNode);
-        event.chainId = makeChainId(run);
-        event.parentId = makeStageParentEventId(run, startNode);
-        event.kind = ActivityKind.JENKINS;
-        event.origin = VERSIONED_PLUGIN_ORIGIN;
-        event.createdAt = Timestamp.fromEpochMs(getTime(startNode));
-        event.finishedAt = Timestamp.fromEpochMs(getTime(endNode));
-        event.conclusion = endNode.getError() == null ? ActivityConclusion.SUCCESS : ActivityConclusion.FAILURE;
-        event.payload = makeStageActivityEventPayloadForm(run, startNode, endNode);
-        event.fact = makeStageFactForm(run, startNode);
-        return event;
+        return ImmutableActivityEventForm.builder()
+                .id(makeStageEventId(run, startNode))
+                .chainId(makeChainId(run))
+                .parentId(makeStageParentEventId(run, startNode))
+                .kind(ActivityKind.JENKINS)
+                .origin(VERSIONED_PLUGIN_ORIGIN)
+                .createdAt(Timestamp.fromEpochMs(getTime(startNode)))
+                .finishedAt(Timestamp.fromEpochMs(getTime(endNode)))
+                .conclusion(endNode.getError() == null ? ActivityConclusion.SUCCESS : ActivityConclusion.FAILURE)
+                .payload(makeStageActivityEventPayloadForm(run, startNode, endNode))
+                .fact(makeStageFactForm(run, startNode))
+                .build();
     }
 
 }
