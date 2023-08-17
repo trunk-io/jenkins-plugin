@@ -3,6 +3,8 @@ package io.trunk.jenkins.client;
 import com.google.gson.Gson;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import io.trunk.jenkins.model.Metadata;
+import io.trunk.jenkins.model.Repo;
+import io.trunk.jenkins.model.event.ActivityPayloadForm;
 import io.trunk.jenkins.model.service.TrackEventsRequest;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -29,6 +31,16 @@ public class TrunkClient {
     }
 
     public void trackEvents(@NonNull TrackEventsRequest req, @NonNull Metadata md) {
+        for (final var event : req.events()) {
+
+            LOG.info(String.format("Tracking event %s for repo %s",
+                    ActivityPayloadForm.getTitle(event.payload()),
+                    Repo.getFullName(req.repo())
+            ));
+
+
+        }
+
         final var body = this.gson.toJson(req);
         final var httpReq = new Request.Builder()
                 .url(rpcUrl)

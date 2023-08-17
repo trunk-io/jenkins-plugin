@@ -2,6 +2,7 @@ package io.trunk.jenkins;
 
 import com.google.gson.Gson;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import hudson.model.Run;
 import io.trunk.jenkins.client.TrunkClient;
 import io.trunk.jenkins.model.Metadata;
 import io.trunk.jenkins.model.Repo;
@@ -14,10 +15,12 @@ import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class ActivityHandler {
 
@@ -31,18 +34,18 @@ public class ActivityHandler {
      * Pipeline events.
      */
 
-    public void onPipelineStarted(@NonNull WorkflowRun run, List<Repo> repos) {
+    public void onPipelineStarted(@NonNull Run<?, ?> run, List<Repo> repos) {
         reposByRunId.put(run.getId(), repos);
         final var event = Mapper.newPipelineStartedEvent(run);
-        trackEventAsync(repos, event);
+        trackEventForRepos(repos, event);
     }
 
-    public void onPipelineCompleted(@NonNull WorkflowRun run) {
+    public void onPipelineCompleted(@NonNull Run<?, ?> run) {
         final var repos = reposByRunId.get(run.getId());
         reposByRunId.remove(run.getId());
         if (repos != null) {
             final var event = Mapper.newPipelineCompletedEvent(run);
-            trackEventAsync(repos, event);
+            trackEventForRepos(repos, event);
         }
     }
 
@@ -58,7 +61,7 @@ public class ActivityHandler {
                 return;
             }
             final var event = Mapper.newStageStartedEvent(run, node);
-            trackEventAsync(repos, event);
+            trackEventForRepos(repos, event);
 
         } catch (IOException e) {
             LOG.warning(e.getMessage());
@@ -73,8 +76,7 @@ public class ActivityHandler {
                 return;
             }
             final var event = Mapper.newStageCompletedEvent(run, startNode, endNode);
-            trackEventAsync(repos, event);
-
+            trackEventForRepos(repos, event);
         } catch (IOException e) {
             LOG.warning(e.getMessage());
         }
@@ -83,7 +85,7 @@ public class ActivityHandler {
     /**
      * Call http client to track events using a thread pool without blocking the main thread.
      */
-    private void trackEventAsync(
+    private void trackEventForRepos(
             @NonNull List<Repo> repos,
             @NonNull ActivityEventForm event) {
 
@@ -91,8 +93,14 @@ public class ActivityHandler {
         final var client = new TrunkClient(http, gson, cfg.trunkApi);
         final var md = Metadata.make(cfg.token);
 
-        for (Repo repo : repos) {
-            pool.submit(() -> client.trackEvents(TrackEventsRequest.forSingleEvent(repo, event), md));
+        try {
+            pool.invokeAll(repos.stream().map((repo) -> (Callable<Object>) () -> {
+                client.trackEvents(TrackEventsRequest.forSingleEvent(repo, event), md);
+                return null;
+            }).collect(Collectors.toList()));
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            LOG.warning(e.getMessage());
         }
     }
 
