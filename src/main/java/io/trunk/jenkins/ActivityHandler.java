@@ -2,6 +2,7 @@ package io.trunk.jenkins;
 
 import com.google.gson.Gson;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import hudson.model.Run;
 import io.trunk.jenkins.client.TrunkClient;
 import io.trunk.jenkins.model.Metadata;
 import io.trunk.jenkins.model.Repo;
@@ -33,13 +34,13 @@ public class ActivityHandler {
      * Pipeline events.
      */
 
-    public void onPipelineStarted(@NonNull WorkflowRun run, List<Repo> repos) {
+    public void onPipelineStarted(@NonNull Run<?, ?> run, List<Repo> repos) {
         reposByRunId.put(run.getId(), repos);
         final var event = Mapper.newPipelineStartedEvent(run);
         trackEventForRepos(repos, event);
     }
 
-    public void onPipelineCompleted(@NonNull WorkflowRun run) {
+    public void onPipelineCompleted(@NonNull Run<?, ?> run) {
         final var repos = reposByRunId.get(run.getId());
         reposByRunId.remove(run.getId());
         if (repos != null) {

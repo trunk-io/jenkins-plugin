@@ -4,8 +4,10 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import hudson.model.Actionable;
 import hudson.model.Result;
+import hudson.model.Run;
 import io.trunk.jenkins.model.Timestamp;
 import io.trunk.jenkins.model.event.*;
+import io.trunk.jenkins.utils.JobUtil;
 import io.trunk.jenkins.utils.NodeUtil;
 import io.trunk.jenkins.utils.VersionUtil;
 import jenkins.model.Jenkins;
@@ -13,7 +15,6 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.Blake3;
 import org.jenkinsci.plugins.workflow.actions.TimingAction;
 import org.jenkinsci.plugins.workflow.graph.FlowNode;
-import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.jfree.util.Log;
 
 import java.nio.charset.StandardCharsets;
@@ -43,12 +44,12 @@ public class Mapper {
         throw new RuntimeException("No timing action found");
     }
 
-    private static String getActivityUrl(@NonNull WorkflowRun run) {
+    private static String getActivityUrl(@NonNull Run<?, ?> run) {
         final var j = Jenkins.get();
         return String.format("%s%s", j.getRootUrl(), run.getUrl());
     }
 
-    private static String getFactUrl(@NonNull WorkflowRun run) {
+    private static String getFactUrl(@NonNull Run<?, ?> run) {
         final var j = Jenkins.get();
         return String.format("%s%s", j.getRootUrl(), run.getParent().getUrl());
     }
@@ -76,24 +77,24 @@ public class Mapper {
     /**
      * Pipeline key is a hash of the pipeline name.
      */
-    private static String makePipelineFactKey(@NonNull WorkflowRun run) {
+    private static String makeJobRunFactKey(@NonNull Run<?, ?> run) {
         return hashString(run.getParent().getName());
     }
 
-    public static String makePipelineEventId(@NonNull WorkflowRun run) {
-        return String.format("%s#%s", makePipelineFactKey(run), run.getNumber());
+    public static String makeJobRunEventId(@NonNull Run<?, ?> run) {
+        return String.format("%s#%s", makeJobRunFactKey(run), run.getNumber());
     }
 
-    private static String makeStageEventId(@NonNull WorkflowRun run, @NonNull FlowNode node) {
+    private static String makeStageEventId(@NonNull Run<?, ?> run, @NonNull FlowNode node) {
         return String.format("%s#%s", makeStageFactKey(run, node), run.getNumber());
     }
 
-    private static String makeStageParentEventId(@NonNull WorkflowRun run, @NonNull FlowNode node) {
+    private static String makeStageParentEventId(@NonNull Run<?, ?> run, @NonNull FlowNode node) {
         return String.format("%s#%d", makeStageParentFactKey(run, node), run.getNumber());
     }
 
-    private static String makeChainId(@NonNull WorkflowRun run) {
-        return makePipelineEventId(run);
+    private static String makeJobRunChainId(@NonNull Run<?, ?> run) {
+        return makeJobRunEventId(run);
     }
 
     /**
@@ -109,7 +110,7 @@ public class Mapper {
         return stages;
     }
 
-    private static String getFullPath(@NonNull WorkflowRun run, @NonNull FlowNode node) {
+    private static String getFullPath(@NonNull Run<?, ?> run, @NonNull FlowNode node) {
         final var names = new ArrayList<String>();
         names.add(node.getDisplayName());
         getParentStages(node).forEach(parent -> names.add(parent.getDisplayName()));
@@ -127,21 +128,21 @@ public class Mapper {
      * </pre>
      * Will become hash("Pipeline_1/Stage_1/Stage_1.1").
      */
-    private static String makeStageFactKey(@NonNull WorkflowRun run, @NonNull FlowNode node) {
+    private static String makeStageFactKey(@NonNull Run<?, ?> run, @NonNull FlowNode node) {
         return hashString(getFullPath(run, node));
     }
 
-    private static String makeStageParentFactKey(WorkflowRun run, FlowNode node) {
+    private static String makeStageParentFactKey(Run<?, ?> run, FlowNode node) {
         final var parents = getParentStages(node);
         if (parents.isEmpty()) {
-            return makePipelineFactKey(run);
+            return makeJobRunFactKey(run);
         }
         return makeStageFactKey(run, parents.get(0));
     }
 
-    public static FactForm makePipelineFactForm(@NonNull WorkflowRun run) {
+    public static FactForm makePipelineFactForm(@NonNull Run<?, ?> run) {
         return ImmutableFactForm.builder()
-                .key(makePipelineFactKey(run))
+                .key(makeJobRunFactKey(run))
                 .name(run.getParent().getName())
                 .payload(ImmutableFactPayloadForm.builder()
                         .tagsString(Collections.singletonList(ActivityStringTagForm.make("url", getFactUrl(run))))
@@ -150,20 +151,27 @@ public class Mapper {
                 .build();
     }
 
-    public static ActivityPayloadForm makePipelineActivityEventPayloadForm(@NonNull WorkflowRun run) {
+    public static ActivityPayloadForm makePipelineActivityEventPayloadForm(@NonNull Run<?, ?> run) {
         final var now = System.currentTimeMillis();
         final var duration = run.getResult() == null ? 0 : now - run.getStartTimeInMillis();
+        var type = "unknown";
+        if (JobUtil.asWorkflowRun(run) != null) {
+            type = "pipeline";
+        } else if (JobUtil.asFreestyleBuild(run) != null) {
+            type = "freestyle";
+        }
         return ImmutableActivityPayloadForm.builder()
                 .tagsString(Collections.emptyList())
                 .metrics(Collections.singletonList(ActivityMetricForm.make("duration_ms", duration)))
                 .tagsInt64(Collections.singletonList(ActivityIntegerTagForm.make("build", run.getNumber())))
                 .tagsString(List.of(
                         ActivityStringTagForm.make("title", run.getDisplayName()),
-                        ActivityStringTagForm.make("url", getActivityUrl(run))
+                        ActivityStringTagForm.make("url", getActivityUrl(run)),
+                        ActivityStringTagForm.make("t", type)
                 )).build();
     }
 
-    private static FactForm makeStageFactForm(@NonNull WorkflowRun run, @NonNull FlowNode startNode) {
+    private static FactForm makeStageFactForm(@NonNull Run<?, ?> run, @NonNull FlowNode startNode) {
         return ImmutableFactForm.builder()
                 .key(makeStageFactKey(run, startNode))
                 .name(startNode.getDisplayName())
@@ -175,7 +183,7 @@ public class Mapper {
     }
 
     private static ActivityPayloadForm makeStageActivityEventPayloadForm(
-            @NonNull WorkflowRun run,
+            @NonNull Run<?, ?> run,
             @NonNull FlowNode startNode,
             @Nullable FlowNode endNode) {
         final var duration = endNode == null ? 0 : getTime(endNode) - getTime(startNode);
@@ -186,14 +194,15 @@ public class Mapper {
                 .tagsString(List.of(
                         ActivityStringTagForm.make("path", getFullPath(run, startNode)),
                         ActivityStringTagForm.make("title", run.getDisplayName()),
-                        ActivityStringTagForm.make("url", getActivityUrl(run))
+                        ActivityStringTagForm.make("url", getActivityUrl(run)),
+                        ActivityStringTagForm.make("t", "stage")
                 )).build();
     }
 
-    public static ActivityEventForm newPipelineStartedEvent(@NonNull WorkflowRun run) {
+    public static ActivityEventForm newPipelineStartedEvent(@NonNull Run<?, ?> run) {
         return ImmutableActivityEventForm.builder()
-                .id(makePipelineEventId(run))
-                .chainId(makeChainId(run))
+                .id(makeJobRunEventId(run))
+                .chainId(makeJobRunChainId(run))
                 .kind(ActivityKind.JENKINS)
                 .origin(VERSIONED_PLUGIN_ORIGIN)
                 .createdAt(Timestamp.fromEpochMs(run.getStartTimeInMillis()))
@@ -203,11 +212,11 @@ public class Mapper {
                 .build();
     }
 
-    public static ActivityEventForm newPipelineCompletedEvent(@NonNull WorkflowRun run) {
+    public static ActivityEventForm newPipelineCompletedEvent(@NonNull Run<?, ?> run) {
         final var now = System.currentTimeMillis();
         return ImmutableActivityEventForm.builder()
-                .id(makePipelineEventId(run))
-                .chainId(makeChainId(run))
+                .id(makeJobRunEventId(run))
+                .chainId(makeJobRunChainId(run))
                 .kind(ActivityKind.JENKINS)
                 .origin(VERSIONED_PLUGIN_ORIGIN)
                 .createdAt(Timestamp.fromEpochMs(run.getStartTimeInMillis()))
@@ -219,11 +228,11 @@ public class Mapper {
     }
 
     public static ActivityEventForm newStageStartedEvent(
-            @NonNull WorkflowRun run,
+            @NonNull Run<?, ?> run,
             @NonNull FlowNode node) {
         return ImmutableActivityEventForm.builder()
                 .id(makeStageEventId(run, node))
-                .chainId(makeChainId(run))
+                .chainId(makeJobRunChainId(run))
                 .parentId(makeStageParentEventId(run, node))
                 .kind(ActivityKind.JENKINS)
                 .origin(VERSIONED_PLUGIN_ORIGIN)
@@ -235,12 +244,12 @@ public class Mapper {
     }
 
     public static ActivityEventForm newStageCompletedEvent(
-            @NonNull WorkflowRun run,
+            @NonNull Run<?, ?> run,
             @NonNull FlowNode startNode,
             @NonNull FlowNode endNode) {
         return ImmutableActivityEventForm.builder()
                 .id(makeStageEventId(run, startNode))
-                .chainId(makeChainId(run))
+                .chainId(makeJobRunChainId(run))
                 .parentId(makeStageParentEventId(run, startNode))
                 .kind(ActivityKind.JENKINS)
                 .origin(VERSIONED_PLUGIN_ORIGIN)
