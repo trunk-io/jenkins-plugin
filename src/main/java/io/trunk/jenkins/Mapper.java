@@ -112,6 +112,9 @@ public class Mapper {
                         ActivityMetricForm.make("duration_ms", duration),
                         ActivityMetricForm.make("init_ms", initDuration)
                 ))
+                .timestamps(Collections.singletonList(
+                        ActivityTimestampForm.make("init", Timestamp.fromEpochMs(ActionUtil.getInitTimeMillis(run)))
+                ))
                 .tagsInt64(Collections.singletonList(ActivityIntegerTagForm.make("build", run.getNumber())))
                 .tagsString(List.of(
                         ActivityStringTagForm.make("title", run.getDisplayName()),
