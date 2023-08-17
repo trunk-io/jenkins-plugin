@@ -99,7 +99,7 @@ public class Mapper {
     public static ActivityPayloadForm makePipelineActivityEventPayloadForm(@NonNull Run<?, ?> run) {
         final var now = System.currentTimeMillis();
         final var duration = run.getResult() == null ? 0 : now - run.getStartTimeInMillis();
-        final var initDuration = run.getStartTimeInMillis() - ActionUtil.getInitTimeMillis(run);
+        final var initDuration = ActionUtil.getStartTimeMillis(run) - ActionUtil.getInitTimeMillis(run);
         var type = "unknown";
         if (JobUtil.asWorkflowRun(run) != null) {
             type = "pipeline";

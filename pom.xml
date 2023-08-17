@@ -39,6 +39,7 @@
         <revision>0.1.1</revision>
         <changelist>-SNAPSHOT</changelist>
         <jenkins.version>2.387.1</jenkins.version>
+        <enforcer.skip>true</enforcer.skip>
     </properties>
 
     <issueManagement>

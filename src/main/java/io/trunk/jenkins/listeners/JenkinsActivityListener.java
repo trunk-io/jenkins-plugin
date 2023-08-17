@@ -38,6 +38,7 @@ public class JenkinsActivityListener extends RunListener<Run<?, ?>> implements G
     @Override
     public void onStarted(Run<?, ?> run, @NonNull TaskListener listener) {
         if (hasValidState(run, Configuration.get())) {
+            run.addAction(new TimingAction());
             final var workflowRun = JobUtil.asWorkflowRun(run);
             final var freestyleBuild = JobUtil.asFreestyleBuild(run);
             if (workflowRun != null) {
