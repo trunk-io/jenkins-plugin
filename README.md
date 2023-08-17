@@ -1,3 +1,3 @@
-# jenkins-plugin
+# Trunk Jenkins Plugin
 
-Please look for documentation on Slite: https://trunk.slite.com/app/docs/B6BvIXQwei-D4r
+This plugin integrates Jenkins with [Trunk.io CI Analytics](https://trunk.io/).

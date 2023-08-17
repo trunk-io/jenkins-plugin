@@ -20,7 +20,11 @@
     <url>https://trunk.io</url>
 
     <licenses>
-        <!-- TODO(TRUNK-8304): add license and make plugin public -->
+        <license>
+            <name>MIT License</name>
+            <url>https://www.opensource.org/licenses/mit-license.php</url>
+            <distribution>repo</distribution>
+        </license>
     </licenses>
 
     <properties>
