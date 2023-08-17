@@ -25,6 +25,7 @@ public class JenkinsPipelineActivityListener extends RunListener<WorkflowRun> im
 
     @Override
     public void onStarted(WorkflowRun run, @NonNull TaskListener listener) {
+        LOG.info("On Started FIRED");
         run.getExecutionPromise().addListener(() -> {
             handler.onPipelineStarted(run, ScmUtil.getRepos(run, listener));
         }, Executors.newSingleThreadExecutor());
@@ -32,6 +33,7 @@ public class JenkinsPipelineActivityListener extends RunListener<WorkflowRun> im
 
     @Override
     public void onFinalized(WorkflowRun run) {
+        LOG.info("On Finalized FIRED");
         handler.onPipelineCompleted(run);
     }
 

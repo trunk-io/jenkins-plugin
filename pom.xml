@@ -26,7 +26,7 @@
     <properties>
         <revision>0.1.1</revision>
         <changelist>-DEV</changelist>
-        <jenkins.version>2.387.3</jenkins.version>
+        <jenkins.version>2.401.3</jenkins.version>
         <spotless.check.skip>true</spotless.check.skip>
         <enforcer.skip>true</enforcer.skip>
     </properties>
@@ -54,8 +54,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
                 <configuration>
-                    <source>11</source>
-                    <target>11</target>
+                    <source>16</source>
+                    <target>16</target>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.immutables</groupId>
@@ -73,6 +73,19 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>structs</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jenkinsci.plugins</groupId>
+            <artifactId>pipeline-model-definition</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jenkinsci.plugins</groupId>
+            <artifactId>pipeline-model-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jenkinsci.plugins</groupId>
+            <artifactId>pipeline-model-extensions</artifactId>
         </dependency>
 
         <dependency>
