@@ -11,12 +11,12 @@
         <relativePath/>
     </parent>
 
-    <groupId>io.trunk.jenkins</groupId>
-    <artifactId>trunk-io-jenkins-plugin</artifactId>
+    <groupId>org.trunk.jenkins.plugins</groupId>
+    <artifactId>trunk</artifactId>
     <version>${revision}${changelist}</version>
     <packaging>hpi</packaging>
-    <name>Trunk Jenkins Plugin</name>
-    <description>Provide integration with Trunk CI Analytics.</description>
+    <name>Trunk Plugin</name>
+    <description>This plugin is used to forward events to Trunk CI Analytics.</description>
     <url>https://trunk.io</url>
 
     <licenses>
@@ -25,10 +25,8 @@
 
     <properties>
         <revision>0.1.1</revision>
-        <changelist>-DEV</changelist>
+        <changelist>-SNAPSHOT</changelist>
         <jenkins.version>2.387.1</jenkins.version>
-        <spotless.check.skip>true</spotless.check.skip>
-        <enforcer.skip>true</enforcer.skip>
     </properties>
 
     <issueManagement>
