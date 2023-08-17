@@ -43,6 +43,16 @@ public class Mapper {
         throw new RuntimeException("No timing action found");
     }
 
+    private static String getActivityUrl(@NonNull WorkflowRun run) {
+        final var j = Jenkins.get();
+        return String.format("%s%s", j.getRootUrl(), run.getUrl());
+    }
+
+    private static String getFactUrl(@NonNull WorkflowRun run) {
+        final var j = Jenkins.get();
+        return String.format("%s%s", j.getRootUrl(), run.getParent().getUrl());
+    }
+
     private static ActivityConclusion resultToConclusion(Result result) {
         if (Result.SUCCESS.equals(result)) {
             return ActivityConclusion.SUCCESS;
@@ -70,7 +80,7 @@ public class Mapper {
         return hashString(run.getParent().getName());
     }
 
-    private static String makePipelineEventId(@NonNull WorkflowRun run) {
+    public static String makePipelineEventId(@NonNull WorkflowRun run) {
         return String.format("%s#%s", makePipelineFactKey(run), run.getNumber());
     }
 
@@ -123,19 +133,18 @@ public class Mapper {
 
     private static String makeStageParentFactKey(WorkflowRun run, FlowNode node) {
         final var parents = getParentStages(node);
-        if (parents.size() > 1) {
-            return makeStageFactKey(run, parents.get(0));
+        if (parents.isEmpty()) {
+            return makePipelineFactKey(run);
         }
-        return makePipelineFactKey(run);
+        return makeStageFactKey(run, parents.get(0));
     }
 
     public static FactForm makePipelineFactForm(@NonNull WorkflowRun run) {
-        final var url = String.format("%s%s", Jenkins.get().getRootUrl(), run.getParent().getUrl());
         return ImmutableFactForm.builder()
                 .key(makePipelineFactKey(run))
                 .name(run.getParent().getName())
                 .payload(ImmutableFactPayloadForm.builder()
-                        .tagsString(Collections.singletonList(ActivityStringTagForm.make("url", url)))
+                        .tagsString(Collections.singletonList(ActivityStringTagForm.make("url", getFactUrl(run))))
                         .tagsInt64(Collections.emptyList())
                         .build())
                 .build();
@@ -150,17 +159,16 @@ public class Mapper {
                 .tagsInt64(Collections.singletonList(ActivityIntegerTagForm.make("build", run.getNumber())))
                 .tagsString(List.of(
                         ActivityStringTagForm.make("title", run.getDisplayName()),
-                        ActivityStringTagForm.make("url", run.getUrl())
+                        ActivityStringTagForm.make("url", getActivityUrl(run))
                 )).build();
     }
 
     private static FactForm makeStageFactForm(@NonNull WorkflowRun run, @NonNull FlowNode startNode) {
-        final var url = String.format("%s%s", Jenkins.get().getRootUrl(), run.getParent().getUrl());
         return ImmutableFactForm.builder()
                 .key(makeStageFactKey(run, startNode))
                 .name(startNode.getDisplayName())
                 .payload(ImmutableFactPayloadForm.builder()
-                        .tagsString(Collections.singletonList(ActivityStringTagForm.make("url", url)))
+                        .tagsString(Collections.singletonList(ActivityStringTagForm.make("url", getActivityUrl(run))))
                         .tagsInt64(Collections.emptyList())
                         .build())
                 .build();
@@ -177,7 +185,8 @@ public class Mapper {
                 .tagsInt64(Collections.singletonList(ActivityIntegerTagForm.make("build", run.getNumber())))
                 .tagsString(List.of(
                         ActivityStringTagForm.make("path", getFullPath(run, startNode)),
-                        ActivityStringTagForm.make("title", startNode.getDisplayName())
+                        ActivityStringTagForm.make("title", run.getDisplayName()),
+                        ActivityStringTagForm.make("url", getActivityUrl(run))
                 )).build();
     }
 

@@ -1,5 +1,6 @@
 package io.trunk.jenkins.model;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.immutables.value.Value;
 
 @Value.Immutable
@@ -14,6 +15,10 @@ public interface Repo {
                 .owner(owner)
                 .name(name)
                 .build();
+    }
+
+    static String getFullName(@NonNull Repo repo) {
+        return repo.owner() + "/" + repo.name();
     }
 
     static Repo fromGitUrl(String gitRepoUrl) {
