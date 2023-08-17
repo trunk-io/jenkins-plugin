@@ -2,6 +2,7 @@ package io.trunk.jenkins.client;
 
 import com.google.gson.Gson;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import io.trunk.jenkins.TrunkLog;
 import io.trunk.jenkins.model.Metadata;
 import io.trunk.jenkins.model.Repo;
 import io.trunk.jenkins.model.event.ActivityPayloadForm;
@@ -14,9 +15,13 @@ import okhttp3.RequestBody;
 import java.io.IOException;
 import java.util.logging.Logger;
 
+/**
+ * Simple wrapper around OkHTTP client to make requests to Trunk API.
+ */
 public class TrunkClient {
+
     private static final String SOURCE = "jenkins-plugin";
-    private static final String TRACK_EVENTS_PATH = "/v1/metrics/v2/trackEvents";
+    private static final String TRACK_EVENTS_PATH = "/v1/trackEvents";
     private static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json");
     private static final Logger LOG = Logger.getLogger(TrunkClient.class.getName());
 
@@ -32,13 +37,10 @@ public class TrunkClient {
 
     public void trackEvents(@NonNull TrackEventsRequest req, @NonNull Metadata md) {
         for (final var event : req.events()) {
-
-            LOG.info(String.format("Tracking event %s for repo %s",
+            TrunkLog.info(String.format("Tracking event %s for repo %s",
                     ActivityPayloadForm.getTitle(event.payload()),
                     Repo.getFullName(req.repo())
             ));
-
-
         }
 
         final var body = this.gson.toJson(req);

@@ -7,7 +7,6 @@ import hudson.model.TaskListener;
 import hudson.plugins.git.GitSCM;
 import io.trunk.jenkins.model.Repo;
 import org.apache.commons.lang.StringUtils;
-import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 
 import java.util.ArrayList;
 import java.util.List;

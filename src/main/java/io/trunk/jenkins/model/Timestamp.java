@@ -6,10 +6,6 @@ import java.time.Instant;
 
 @Value.Immutable
 public interface Timestamp {
-    long seconds();
-
-    long nanos();
-
     static Timestamp fromEpochMs(long epochMs) {
         final var instant = Instant.ofEpochMilli(epochMs);
         return ImmutableTimestamp.builder()
@@ -17,4 +13,8 @@ public interface Timestamp {
                 .nanos(instant.getNano())
                 .build();
     }
+
+    long seconds();
+
+    long nanos();
 }

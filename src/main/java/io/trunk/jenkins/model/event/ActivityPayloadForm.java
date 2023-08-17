@@ -7,18 +7,6 @@ import java.util.List;
 
 @Value.Immutable
 public interface ActivityPayloadForm {
-    @Nullable
-    List<ActivityMetricForm> metrics();
-
-    @Nullable
-    List<ActivityIntegerTagForm> tagsInt64();
-
-    @Nullable
-    List<ActivityStringTagForm> tagsString();
-
-    @Nullable
-    List<ActivityTimestampForm> timestamps();
-
     static String getTitle(ActivityPayloadForm payload) {
         final var tags = payload.tagsString();
         if (tags == null || tags.isEmpty()) {
@@ -31,4 +19,16 @@ public interface ActivityPayloadForm {
         }
         return "";
     }
+
+    @Nullable
+    List<ActivityMetricForm> metrics();
+
+    @Nullable
+    List<ActivityIntegerTagForm> tagsInt64();
+
+    @Nullable
+    List<ActivityStringTagForm> tagsString();
+
+    @Nullable
+    List<ActivityTimestampForm> timestamps();
 }
