@@ -6,10 +6,7 @@ import hudson.Extension;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.model.listeners.RunListener;
-import io.trunk.jenkins.ActivityHandler;
-import io.trunk.jenkins.Configuration;
-import io.trunk.jenkins.InitTimeAction;
-import io.trunk.jenkins.RunTracker;
+import io.trunk.jenkins.*;
 import io.trunk.jenkins.utils.JobUtil;
 import io.trunk.jenkins.utils.NodeUtil;
 import io.trunk.jenkins.utils.ScmUtil;
@@ -77,23 +74,23 @@ public class JenkinsActivityListener extends RunListener<Run<?, ?>> implements G
 
     boolean hasValidState(@CheckForNull Run<?, ?> run, @CheckForNull Configuration cfg) {
         if (run == null) {
-            LOG.warning("Run is null");
+            TrunkLog.warning("Run is null");
             return false;
         }
         if (!this.runTracker.isRunTracked(run)) {
-            LOG.warning(String.format("Run %s is not started", run));
+            TrunkLog.warning(String.format("Run %s is not started", run));
             return false;
         }
         if (cfg == null) {
-            LOG.warning("Trunk configuration is not set");
+            TrunkLog.warning("Trunk configuration is not set");
             return false;
         }
         if (StringUtils.isEmpty(cfg.trunkApi)) {
-            LOG.warning("Trunk API is not set");
+            TrunkLog.warning("Trunk API is not set");
             return false;
         }
         if (StringUtils.isEmpty(cfg.token)) {
-            LOG.warning("Trunk Organization Token is not set");
+            TrunkLog.warning("Trunk Organization Token is not set");
             return false;
         }
         return true;
