@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 public class TrunkClient {
 
     private static final String SOURCE = "jenkins-plugin";
-    private static final String TRACK_EVENTS_PATH = "/v1/metrics/v2/trackEvents";
+    private static final String TRACK_EVENTS_PATH = "/v1/metrics/trackEvents";
     private static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json");
     private static final Logger LOG = Logger.getLogger(TrunkClient.class.getName());
 
