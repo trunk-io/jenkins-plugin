@@ -14,7 +14,7 @@ public interface Repo {
     }
 
     static String getFullName(@NonNull Repo repo) {
-        return repo.owner() + "/" + repo.name();
+        return String.format("%s/%s", repo.owner(), repo.name());
     }
 
     static Repo fromGitUrl(String gitRepoUrl) {

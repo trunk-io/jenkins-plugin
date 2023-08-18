@@ -5,6 +5,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import hudson.model.Result;
 import hudson.model.Run;
 import io.trunk.jenkins.model.Timestamp;
+import io.trunk.jenkins.model.TimestampTag;
 import io.trunk.jenkins.model.event.*;
 import io.trunk.jenkins.utils.*;
 import jenkins.model.Jenkins;
@@ -113,7 +114,7 @@ public class Mapper {
                         ActivityMetricForm.make("init_ms", initDuration)
                 ))
                 .timestamps(Collections.singletonList(
-                        ActivityTimestampForm.make("init", Timestamp.fromEpochMs(ActionUtil.getInitTimeMillis(run)))
+                        ActivityTimestampForm.make("init", TimestampTag.fromEpochMs(ActionUtil.getInitTimeMillis(run)))
                 ))
                 .tagsInt64(Collections.singletonList(ActivityIntegerTagForm.make("build", run.getNumber())))
                 .tagsString(List.of(

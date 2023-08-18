@@ -49,7 +49,7 @@ public class JenkinsActivityListener extends RunListener<Run<?, ?>> implements G
     }
 
     @Override
-    public void onFinalized(Run<?, ?> run) {
+    public void onCompleted(Run<?, ?> run, @NonNull TaskListener listener) {
         if (this.hasValidState(run, Configuration.get())) {
             handler.onRunCompleted(run);
         }

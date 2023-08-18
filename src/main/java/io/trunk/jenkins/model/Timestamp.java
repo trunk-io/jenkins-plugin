@@ -16,5 +16,5 @@ public interface Timestamp {
 
     long seconds();
 
-    long nanos();
+    int nanos();
 }
