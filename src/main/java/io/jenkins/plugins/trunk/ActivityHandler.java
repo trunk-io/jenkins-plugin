@@ -96,7 +96,12 @@ public class ActivityHandler {
 
         final var cfg = Configuration.get();
         final var client = new TrunkClient(http, gson, cfg.trunkApi);
-        final var md = Metadata.make(SecretsUtil.getTrunkToken());
+        final var token = SecretsUtil.getTrunkToken();
+        if (token == null) {
+            LOG.warning("Trunk token is not set");
+            return;
+        }
+        final var md = Metadata.make(token);
 
         try {
             pool.invokeAll(repos.stream().map((repo) -> (Callable<Object>) () -> {
