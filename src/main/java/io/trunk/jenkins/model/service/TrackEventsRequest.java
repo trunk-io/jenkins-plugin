@@ -8,9 +8,6 @@ import java.util.List;
 
 @Value.Immutable
 public interface TrackEventsRequest {
-    Repo repo();
-    List<ActivityEventForm> events();
-
     static TrackEventsRequest forSingleEvent(Repo repo, ActivityEventForm event) {
         return ImmutableTrackEventsRequest.builder()
                 .repo(repo)
@@ -24,4 +21,8 @@ public interface TrackEventsRequest {
                 .events(events)
                 .build();
     }
+
+    Repo repo();
+
+    List<ActivityEventForm> events();
 }

@@ -6,7 +6,10 @@
             <f:textbox/>
         </f:entry>
         <f:entry title="Trunk API" field="trunkApi">
-            <f:textbox default="https://api.trunk-staging.io:443"/>
+            <f:textbox default="https://api.trunk.io:443"/>
+        </f:entry>
+        <f:entry title="Enable Debug Logging" field="trunkApi">
+            <f:checkbox default="false"/>
         </f:entry>
     </f:section>
 </j:jelly>

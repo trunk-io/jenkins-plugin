@@ -22,6 +22,10 @@ import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+/**
+ * Handles Jenkins activity events such as pipepiline events and free style build events
+ * and their sub-stages or steps.
+ */
 public class ActivityHandler {
 
     private static final Logger LOG = Logger.getLogger(ActivityHandler.class.getName());
@@ -31,16 +35,16 @@ public class ActivityHandler {
     private final ExecutorService pool = Executors.newFixedThreadPool(8);
 
     /**
-     * Pipeline events.
+     * Pipeline and free style build run events.
      */
 
-    public void onPipelineStarted(@NonNull Run<?, ?> run, List<Repo> repos) {
+    public void onRunStarted(@NonNull Run<?, ?> run, List<Repo> repos) {
         reposByRunId.put(run.getId(), repos);
         final var event = Mapper.newPipelineStartedEvent(run);
         trackEventForRepos(repos, event);
     }
 
-    public void onPipelineCompleted(@NonNull Run<?, ?> run) {
+    public void onRunCompleted(@NonNull Run<?, ?> run) {
         final var repos = reposByRunId.get(run.getId());
         reposByRunId.remove(run.getId());
         if (repos != null) {

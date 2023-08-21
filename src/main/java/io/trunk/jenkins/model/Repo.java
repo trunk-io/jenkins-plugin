@@ -5,10 +5,6 @@ import org.immutables.value.Value;
 
 @Value.Immutable
 public interface Repo {
-    String host();
-    String owner();
-    String name();
-
     static Repo github(String owner, String name) {
         return ImmutableRepo.builder()
                 .host("github.com")
@@ -18,7 +14,7 @@ public interface Repo {
     }
 
     static String getFullName(@NonNull Repo repo) {
-        return repo.owner() + "/" + repo.name();
+        return String.format("%s/%s", repo.owner(), repo.name());
     }
 
     static Repo fromGitUrl(String gitRepoUrl) {
@@ -44,4 +40,10 @@ public interface Repo {
                 .name(name)
                 .build();
     }
+
+    String host();
+
+    String owner();
+
+    String name();
 }

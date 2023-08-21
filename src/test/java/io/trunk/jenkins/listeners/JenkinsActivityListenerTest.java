@@ -6,7 +6,7 @@ import org.jvnet.hudson.test.JenkinsRule;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class JenkinsPipelineActivityListenerTest {
+public class JenkinsActivityListenerTest {
     private static final String PROJECT_NAME = "test-project";
 
     @Rule

@@ -11,12 +11,12 @@
         <relativePath/>
     </parent>
 
-    <groupId>io.trunk.jenkins</groupId>
-    <artifactId>trunk-io-jenkins-plugin</artifactId>
+    <groupId>org.trunk.jenkins.plugins</groupId>
+    <artifactId>trunk</artifactId>
     <version>${revision}${changelist}</version>
     <packaging>hpi</packaging>
-    <name>Trunk Jenkins Plugin</name>
-    <description>Provide integration with Trunk CI Analytics.</description>
+    <name>Trunk Plugin</name>
+    <description>This plugin is used to forward events to Trunk CI Analytics.</description>
     <url>https://trunk.io</url>
 
     <licenses>
@@ -27,11 +27,18 @@
         </license>
     </licenses>
 
+    <developers>
+        <developer>
+            <id>vladimir</id>
+            <name>Vladimir Zaytsev</name>
+            <email>vladimir@trunk.io</email>
+        </developer>
+    </developers>
+
     <properties>
         <revision>0.1.1</revision>
-        <changelist>-DEV</changelist>
+        <changelist>-SNAPSHOT</changelist>
         <jenkins.version>2.387.1</jenkins.version>
-        <spotless.check.skip>true</spotless.check.skip>
         <enforcer.skip>true</enforcer.skip>
     </properties>
 
@@ -62,12 +69,10 @@
     </build>
 
     <dependencies>
-
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>structs</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.jenkinsci.plugins</groupId>
             <artifactId>pipeline-model-definition</artifactId>
@@ -80,64 +85,53 @@
             <groupId>org.jenkinsci.plugins</groupId>
             <artifactId>pipeline-model-extensions</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
             <artifactId>workflow-api</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
             <artifactId>workflow-job</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
             <artifactId>workflow-step-api</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>git</artifactId>
         </dependency>
-
         <dependency>
             <groupId>com.coravy.hudson.plugins.github</groupId>
             <artifactId>github</artifactId>
             <version>1.37.2</version>
         </dependency>
-
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-model</artifactId>
             <version>3.9.4</version>
         </dependency>
-
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
             <version>4.11.0</version>
         </dependency>
-
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.10.1</version>
         </dependency>
-
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
             <version>1.16.0</version>
         </dependency>
-
         <dependency>
             <groupId>org.immutables</groupId>
             <artifactId>value</artifactId>
             <version>2.9.2</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
@@ -151,26 +145,22 @@
             <artifactId>workflow-basic-steps</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
             <artifactId>workflow-cps</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
             <artifactId>workflow-durable-task-step</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>5.4.0</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <repositories>
