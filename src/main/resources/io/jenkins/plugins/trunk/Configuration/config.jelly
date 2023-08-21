@@ -2,13 +2,10 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
          xmlns:t="/lib/hudson" xmlns:f="/lib/form">
     <f:section title="Trunk Plugin Configuration">
-        <f:entry title="Organization Token" field="token">
-            <f:textbox/>
-        </f:entry>
-        <f:entry title="Trunk API" field="trunkApi">
+        <f:entry title="API URL" field="trunkApi">
             <f:textbox default="https://api.trunk.io:443"/>
         </f:entry>
-        <f:entry title="Enable Debug Logging" field="trunkApi">
+        <f:entry title="Enable Debug Logging" field="enableDebugLogging">
             <f:checkbox default="false"/>
         </f:entry>
     </f:section>
