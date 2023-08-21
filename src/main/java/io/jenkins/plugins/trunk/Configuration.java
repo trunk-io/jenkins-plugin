@@ -10,7 +10,6 @@ import org.kohsuke.stapler.StaplerRequest;
  */
 @Extension
 public class Configuration extends GlobalConfiguration {
-    public String token;
     public String trunkApi;
     public boolean enableDebugLogging;
 

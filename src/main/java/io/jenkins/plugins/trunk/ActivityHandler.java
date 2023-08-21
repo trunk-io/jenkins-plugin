@@ -8,6 +8,7 @@ import io.jenkins.plugins.trunk.model.Metadata;
 import io.jenkins.plugins.trunk.model.Repo;
 import io.jenkins.plugins.trunk.model.event.ActivityEventForm;
 import io.jenkins.plugins.trunk.model.service.TrackEventsRequest;
+import io.jenkins.plugins.trunk.utils.SecretsUtil;
 import okhttp3.OkHttpClient;
 import org.jenkinsci.plugins.workflow.graph.FlowNode;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
@@ -95,7 +96,7 @@ public class ActivityHandler {
 
         final var cfg = Configuration.get();
         final var client = new TrunkClient(http, gson, cfg.trunkApi);
-        final var md = Metadata.make(cfg.token);
+        final var md = Metadata.make(SecretsUtil.getTrunkToken());
 
         try {
             pool.invokeAll(repos.stream().map((repo) -> (Callable<Object>) () -> {

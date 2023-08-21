@@ -10,6 +10,7 @@ import io.jenkins.plugins.trunk.*;
 import io.jenkins.plugins.trunk.utils.JobUtil;
 import io.jenkins.plugins.trunk.utils.NodeUtil;
 import io.jenkins.plugins.trunk.utils.ScmUtil;
+import io.jenkins.plugins.trunk.utils.SecretsUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.plugins.workflow.actions.TimingAction;
 import org.jenkinsci.plugins.workflow.flow.GraphListener;
@@ -89,8 +90,8 @@ public class JenkinsActivityListener extends RunListener<Run<?, ?>> implements G
             TrunkLog.warning("Trunk API is not set");
             return false;
         }
-        if (StringUtils.isEmpty(cfg.token)) {
-            TrunkLog.warning("Trunk Organization Token is not set");
+        if (StringUtils.isEmpty(SecretsUtil.getTrunkToken())) {
+            TrunkLog.warning("TRUNK_TOKEN secret not found");
             return false;
         }
         return true;
