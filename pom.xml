@@ -7,17 +7,21 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>4.65</version>
+        <version>4.71</version>
         <relativePath/>
     </parent>
 
     <groupId>org.trunk.jenkins.plugins</groupId>
-    <artifactId>trunk</artifactId>
+    <artifactId>trunk-io</artifactId>
     <version>${revision}${changelist}</version>
     <packaging>hpi</packaging>
     <name>Trunk Plugin</name>
     <description>This plugin is used to forward events to Trunk CI Analytics.</description>
     <url>https://trunk.io</url>
+
+    <scm>
+        <connection>scm:git:git://github.com/trunk-io/jenkins-plugin.git</connection>
+    </scm>
 
     <licenses>
         <license>
@@ -36,9 +40,9 @@
     </developers>
 
     <properties>
-        <revision>0.1.1</revision>
+        <revision>0.0.1</revision>
         <changelist>-SNAPSHOT</changelist>
-        <jenkins.version>2.387.1</jenkins.version>
+        <jenkins.version>2.387.3</jenkins.version>
         <enforcer.skip>true</enforcer.skip>
     </properties>
 
