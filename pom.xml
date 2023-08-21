@@ -11,7 +11,7 @@
         <relativePath/>
     </parent>
 
-    <groupId>org.trunk.jenkins.plugins</groupId>
+    <groupId>io.jenkins.plugins</groupId>
     <artifactId>trunk-io</artifactId>
     <version>${revision}${changelist}</version>
     <packaging>hpi</packaging>
@@ -20,7 +20,9 @@
     <url>https://trunk.io</url>
 
     <scm>
-        <connection>scm:git:git://github.com/trunk-io/jenkins-plugin.git</connection>
+        <connection>scm:git:https://github.com/jenkinsci/trunk-io-plugin.git</connection>
+        <url>scm:git:https://github.com/jenkinsci/trunk-io-plugin</url>
+        <developerConnection>scm:git:https://github.com/jenkinsci/trunk-io-plugin</developerConnection>
     </scm>
 
     <licenses>
