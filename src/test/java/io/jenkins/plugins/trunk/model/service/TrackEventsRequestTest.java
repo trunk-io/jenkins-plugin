@@ -114,6 +114,4 @@ public class TrackEventsRequestTest {
 
         assertEquals(EXPECTED_JSON, json);
     }
-
-
 }
