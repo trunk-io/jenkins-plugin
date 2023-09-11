@@ -10,7 +10,60 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TrackEventsRequestTest {
+public class TrackEventsRequestTest {
+
+    private final static String EXPECTED_JSON = "{\n" +
+            "  \"repo\": {\n" +
+            "    \"host\": \"github.com\",\n" +
+            "    \"owner\": \"trunk-io\",\n" +
+            "    \"name\": \"jenkins-plugin\"\n" +
+            "  },\n" +
+            "  \"events\": [\n" +
+            "    {\n" +
+            "      \"id\": \"test-event-id\",\n" +
+            "      \"platform\": \"jenkins\",\n" +
+            "      \"event\": \"pipeline\",\n" +
+            "      \"chainId\": \"test-chain-id\",\n" +
+            "      \"parentId\": \"test-parent-id\",\n" +
+            "      \"origin\": \"test-origin\",\n" +
+            "      \"createdAt\": {\n" +
+            "        \"s\": 1,\n" +
+            "        \"n\": 2\n" +
+            "      },\n" +
+            "      \"finishedAt\": {\n" +
+            "        \"s\": 3,\n" +
+            "        \"n\": 4\n" +
+            "      },\n" +
+            "      \"conclusion\": \"SUCCESS\",\n" +
+            "      \"payload\": {\n" +
+            "        \"metrics\": [\n" +
+            "          {\n" +
+            "            \"k\": \"test-metric-key\",\n" +
+            "            \"v\": 1.0\n" +
+            "          }\n" +
+            "        ],\n" +
+            "        \"tags\": [\n" +
+            "          {\n" +
+            "            \"k\": \"test-tag-key\",\n" +
+            "            \"v\": \"test-tag-value\"\n" +
+            "          }\n" +
+            "        ]\n" +
+            "      },\n" +
+            "      \"fact\": {\n" +
+            "        \"key\": \"test-fact-key\",\n" +
+            "        \"name\": \"test-fact-name\",\n" +
+            "        \"payload\": {\n" +
+            "          \"tags\": [\n" +
+            "            {\n" +
+            "              \"k\": \"test-fact-tag-key\",\n" +
+            "              \"v\": \"test-fact-tag-value\"\n" +
+            "            }\n" +
+            "          ]\n" +
+            "        }\n" +
+            "      }\n" +
+            "    }\n" +
+            "  ]\n" +
+            "}";
 
     @Test
     public void testSerialization() {
@@ -59,8 +112,7 @@ class TrackEventsRequestTest {
 
         System.out.println(json);
 
-        assertEquals("{}", json);
-
+        assertEquals(EXPECTED_JSON, json);
     }
 
 
