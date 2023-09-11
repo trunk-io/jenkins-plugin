@@ -5,7 +5,6 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import hudson.model.Result;
 import hudson.model.Run;
 import io.jenkins.plugins.trunk.model.Timestamp;
-import io.jenkins.plugins.trunk.model.TimestampTag;
 import io.jenkins.plugins.trunk.model.event.*;
 import io.jenkins.plugins.trunk.utils.*;
 import jenkins.model.Jenkins;
@@ -16,6 +15,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
+
 /**
  * Mapper is responsible for mapping Jenkins objects to Trunk objects.
  */
@@ -24,11 +24,16 @@ public class Mapper {
     private static final Logger LOG = Logger.getLogger(Mapper.class.getName());
     private static final String VERSIONED_PLUGIN_ORIGIN = String.format("jenkins-plugin-%s", VersionUtil.getVersion());
 
+    public static final String PLATFORM_JENKINS = "jenkins";
+    public static final String EVENT_PIPELINE = "pipeline";
+    public static final String EVENT_STAGE = "stage";
+
     public static ActivityEventForm newPipelineStartedEvent(@NonNull Run<?, ?> run) {
         return ImmutableActivityEventForm.builder()
                 .id(makeJobRunEventId(run))
                 .chainId(makeJobRunChainId(run))
-                .kind(ActivityKind.JENKINS)
+                .platform(PLATFORM_JENKINS)
+                .event(EVENT_PIPELINE)
                 .origin(VERSIONED_PLUGIN_ORIGIN)
                 .createdAt(Timestamp.fromEpochMs(run.getStartTimeInMillis()))
                 .conclusion(ActivityConclusion.UNSPECIFIED)
@@ -42,7 +47,8 @@ public class Mapper {
         return ImmutableActivityEventForm.builder()
                 .id(makeJobRunEventId(run))
                 .chainId(makeJobRunChainId(run))
-                .kind(ActivityKind.JENKINS)
+                .platform(PLATFORM_JENKINS)
+                .event(EVENT_PIPELINE)
                 .origin(VERSIONED_PLUGIN_ORIGIN)
                 .createdAt(Timestamp.fromEpochMs(run.getStartTimeInMillis()))
                 .finishedAt(Timestamp.fromEpochMs(now))
@@ -59,7 +65,8 @@ public class Mapper {
                 .id(makeStageEventId(run, node))
                 .chainId(makeJobRunChainId(run))
                 .parentId(makeStageParentEventId(run, node))
-                .kind(ActivityKind.JENKINS)
+                .platform(PLATFORM_JENKINS)
+                .event(EVENT_STAGE)
                 .origin(VERSIONED_PLUGIN_ORIGIN)
                 .createdAt(Timestamp.fromEpochMs(ActionUtil.getStartTimeMillis(node)))
                 .conclusion(ActivityConclusion.UNSPECIFIED)
@@ -76,7 +83,8 @@ public class Mapper {
                 .id(makeStageEventId(run, startNode))
                 .chainId(makeJobRunChainId(run))
                 .parentId(makeStageParentEventId(run, startNode))
-                .kind(ActivityKind.JENKINS)
+                .platform(PLATFORM_JENKINS)
+                .event(EVENT_STAGE)
                 .origin(VERSIONED_PLUGIN_ORIGIN)
                 .createdAt(Timestamp.fromEpochMs(ActionUtil.getStartTimeMillis(startNode)))
                 .finishedAt(Timestamp.fromEpochMs(ActionUtil.getStartTimeMillis(endNode)))
@@ -91,8 +99,7 @@ public class Mapper {
                 .key(makeJobRunFactKey(run))
                 .name(run.getParent().getName())
                 .payload(ImmutableFactPayloadForm.builder()
-                        .tagsString(Collections.singletonList(ActivityStringTagForm.make("url", makeFactUrl(run))))
-                        .tagsInt64(Collections.emptyList())
+                        .tags(Collections.singletonList(ActivityTagForm.make("url", makeFactUrl(run))))
                         .build())
                 .build();
     }
@@ -108,19 +115,18 @@ public class Mapper {
             type = "freestyle";
         }
         return ImmutableActivityPayloadForm.builder()
-                .tagsString(Collections.emptyList())
                 .metrics(List.of(
                         ActivityMetricForm.make("duration_ms", duration),
                         ActivityMetricForm.make("init_ms", initDuration)
                 ))
                 .timestamps(Collections.singletonList(
-                        ActivityTimestampForm.make("init", TimestampTag.fromEpochMs(ActionUtil.getInitTimeMillis(run)))
+                        ActivityTimestampForm.make("init", Timestamp.fromEpochMs(ActionUtil.getInitTimeMillis(run)))
                 ))
-                .tagsInt64(Collections.singletonList(ActivityIntegerTagForm.make("build", run.getNumber())))
-                .tagsString(List.of(
-                        ActivityStringTagForm.make("title", run.getDisplayName()),
-                        ActivityStringTagForm.make("url", makeEventUrl(run)),
-                        ActivityStringTagForm.make("type", type)
+                .tags(List.of(
+                        ActivityTagForm.make("title", run.getDisplayName()),
+                        ActivityTagForm.make("url", makeEventUrl(run)),
+                        ActivityTagForm.make("type", type),
+                        ActivityTagForm.make("build", Integer.toString(run.getNumber()))
                 )).build();
     }
 
@@ -129,8 +135,7 @@ public class Mapper {
                 .key(makeStageFactKey(run, startNode))
                 .name(startNode.getDisplayName())
                 .payload(ImmutableFactPayloadForm.builder()
-                        .tagsString(Collections.singletonList(ActivityStringTagForm.make("url", makeEventUrl(run))))
-                        .tagsInt64(Collections.emptyList())
+                        .tags(Collections.singletonList(ActivityTagForm.make("url", makeEventUrl(run))))
                         .build())
                 .build();
     }
@@ -141,14 +146,12 @@ public class Mapper {
             @Nullable FlowNode endNode) {
         final var duration = endNode == null ? 0 : ActionUtil.getStartTimeMillis(endNode) - ActionUtil.getStartTimeMillis(startNode);
         return ImmutableActivityPayloadForm.builder()
-                .tagsString(Collections.emptyList())
                 .metrics(Collections.singletonList(ActivityMetricForm.make("duration_ms", duration)))
-                .tagsInt64(Collections.singletonList(ActivityIntegerTagForm.make("build", run.getNumber())))
-                .tagsString(List.of(
-                        ActivityStringTagForm.make("path", getFullPath(run, startNode)),
-                        ActivityStringTagForm.make("title", run.getDisplayName()),
-                        ActivityStringTagForm.make("url", makeEventUrl(run)),
-                        ActivityStringTagForm.make("type", "stage")
+                .tags(List.of(
+                        ActivityTagForm.make("path", getFullPath(run, startNode)),
+                        ActivityTagForm.make("title", run.getDisplayName()),
+                        ActivityTagForm.make("url", makeEventUrl(run)),
+                        ActivityTagForm.make("build", Integer.toString(run.getNumber()))
                 )).build();
     }
 

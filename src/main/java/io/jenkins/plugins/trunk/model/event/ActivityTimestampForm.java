@@ -1,11 +1,11 @@
 package io.jenkins.plugins.trunk.model.event;
 
-import io.jenkins.plugins.trunk.model.TimestampTag;
+import io.jenkins.plugins.trunk.model.Timestamp;
 import org.immutables.value.Value;
 
 @Value.Immutable
 public interface ActivityTimestampForm {
-    static ActivityTimestampForm make(String k, TimestampTag v) {
+    static ActivityTimestampForm make(String k, Timestamp v) {
         return ImmutableActivityTimestampForm.builder()
                 .k(k)
                 .v(v)
@@ -14,5 +14,5 @@ public interface ActivityTimestampForm {
 
     String k();
 
-    TimestampTag v();
+    Timestamp v();
 }
