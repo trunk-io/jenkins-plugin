@@ -8,8 +8,5 @@ import java.util.List;
 @Value.Immutable
 public interface FactPayloadForm {
     @Nullable
-    List<ActivityIntegerTagForm> tagsInt64();
-
-    @Nullable
-    List<ActivityStringTagForm> tagsString();
+    List<ActivityTagForm> tags();
 }

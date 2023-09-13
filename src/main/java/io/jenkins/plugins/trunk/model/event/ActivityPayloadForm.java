@@ -8,7 +8,7 @@ import java.util.List;
 @Value.Immutable
 public interface ActivityPayloadForm {
     static String getTitle(ActivityPayloadForm payload) {
-        final var tags = payload.tagsString();
+        final var tags = payload.tags();
         if (tags == null || tags.isEmpty()) {
             return "";
         }
@@ -24,10 +24,7 @@ public interface ActivityPayloadForm {
     List<ActivityMetricForm> metrics();
 
     @Nullable
-    List<ActivityIntegerTagForm> tagsInt64();
-
-    @Nullable
-    List<ActivityStringTagForm> tagsString();
+    List<ActivityTagForm> tags();
 
     @Nullable
     List<ActivityTimestampForm> timestamps();
