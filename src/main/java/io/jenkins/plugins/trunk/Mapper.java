@@ -15,7 +15,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
-
 /**
  * Mapper is responsible for mapping Jenkins objects to Trunk objects.
  */
@@ -32,8 +31,6 @@ public class Mapper {
         return ImmutableActivityEventForm.builder()
                 .id(makeJobRunEventId(run))
                 .chainId(makeJobRunChainId(run))
-                .platform(PLATFORM_JENKINS)
-                .event(EVENT_PIPELINE)
                 .origin(VERSIONED_PLUGIN_ORIGIN)
                 .createdAt(Timestamp.fromEpochMs(run.getStartTimeInMillis()))
                 .conclusion(ActivityConclusion.UNSPECIFIED)
@@ -47,8 +44,6 @@ public class Mapper {
         return ImmutableActivityEventForm.builder()
                 .id(makeJobRunEventId(run))
                 .chainId(makeJobRunChainId(run))
-                .platform(PLATFORM_JENKINS)
-                .event(EVENT_PIPELINE)
                 .origin(VERSIONED_PLUGIN_ORIGIN)
                 .createdAt(Timestamp.fromEpochMs(run.getStartTimeInMillis()))
                 .finishedAt(Timestamp.fromEpochMs(now))
@@ -64,9 +59,7 @@ public class Mapper {
         return ImmutableActivityEventForm.builder()
                 .id(makeStageEventId(run, node))
                 .chainId(makeJobRunChainId(run))
-                .parentId(makeStageParentEventId(run, node))
-                .platform(PLATFORM_JENKINS)
-                .event(EVENT_STAGE)
+                .parent(makeStageParent(run, node))
                 .origin(VERSIONED_PLUGIN_ORIGIN)
                 .createdAt(Timestamp.fromEpochMs(ActionUtil.getStartTimeMillis(node)))
                 .conclusion(ActivityConclusion.UNSPECIFIED)
@@ -82,9 +75,7 @@ public class Mapper {
         return ImmutableActivityEventForm.builder()
                 .id(makeStageEventId(run, startNode))
                 .chainId(makeJobRunChainId(run))
-                .parentId(makeStageParentEventId(run, startNode))
-                .platform(PLATFORM_JENKINS)
-                .event(EVENT_STAGE)
+                .parent(makeStageParent(run, startNode))
                 .origin(VERSIONED_PLUGIN_ORIGIN)
                 .createdAt(Timestamp.fromEpochMs(ActionUtil.getStartTimeMillis(startNode)))
                 .finishedAt(Timestamp.fromEpochMs(ActionUtil.getStartTimeMillis(endNode)))
@@ -96,6 +87,8 @@ public class Mapper {
 
     public static FactForm makePipelineFactForm(@NonNull Run<?, ?> run) {
         return ImmutableFactForm.builder()
+                .platform(PLATFORM_JENKINS)
+                .event(EVENT_PIPELINE)
                 .key(makeJobRunFactKey(run))
                 .name(run.getParent().getName())
                 .payload(ImmutableFactPayloadForm.builder()
@@ -132,6 +125,8 @@ public class Mapper {
 
     private static FactForm makeStageFactForm(@NonNull Run<?, ?> run, @NonNull FlowNode startNode) {
         return ImmutableFactForm.builder()
+                .platform(PLATFORM_JENKINS)
+                .event(EVENT_STAGE)
                 .key(makeStageFactKey(run, startNode))
                 .name(startNode.getDisplayName())
                 .payload(ImmutableFactPayloadForm.builder()
@@ -197,8 +192,13 @@ public class Mapper {
         return String.format("%s#%s", makeStageFactKey(run, node), run.getNumber());
     }
 
-    private static String makeStageParentEventId(@NonNull Run<?, ?> run, @NonNull FlowNode node) {
-        return String.format("%s#%d", makeStageParentFactKey(run, node), run.getNumber());
+    private static ActivityEventParent makeStageParent(@NonNull Run<?, ?> run, @NonNull FlowNode node) {
+        final var parentFactKey = makeStageParentFactKey(run, node);
+        final var parentEventId = String.format("%s#%d", parentFactKey, run.getNumber());
+        return ImmutableActivityEventParent.builder()
+                .factKey(parentFactKey)
+                .eventId(parentEventId)
+                .build();
     }
 
     private static String makeJobRunChainId(@NonNull Run<?, ?> run) {

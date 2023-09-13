@@ -21,10 +21,11 @@ public class TrackEventsRequestTest {
             "  \"events\": [\n" +
             "    {\n" +
             "      \"id\": \"test-event-id\",\n" +
-            "      \"platform\": \"jenkins\",\n" +
-            "      \"event\": \"pipeline\",\n" +
+            "      \"parent\": {\n" +
+            "        \"eventId\": \"test-parent-event-id\",\n" +
+            "        \"factKey\": \"test-parent-key\"\n" +
+            "      },\n" +
             "      \"chainId\": \"test-chain-id\",\n" +
-            "      \"parentId\": \"test-parent-id\",\n" +
             "      \"origin\": \"test-origin\",\n" +
             "      \"createdAt\": {\n" +
             "        \"s\": 1,\n" +
@@ -50,6 +51,8 @@ public class TrackEventsRequestTest {
             "        ]\n" +
             "      },\n" +
             "      \"fact\": {\n" +
+            "        \"platform\": \"jenkins\",\n" +
+            "        \"event\": \"pipeline\",\n" +
             "        \"key\": \"test-fact-key\",\n" +
             "        \"name\": \"test-fact-name\",\n" +
             "        \"payload\": {\n" +
@@ -73,10 +76,13 @@ public class TrackEventsRequestTest {
                 Repo.fromGitUrl("https://github.com/trunk-io/jenkins-plugin.git"),
                 ImmutableActivityEventForm.builder()
                         .id("test-event-id")
-                        .platform("jenkins")
-                        .event("pipeline")
                         .chainId("test-chain-id")
-                        .parentId("test-parent-id")
+                        .parent(ImmutableActivityEventParent
+                                .builder()
+                                .eventId("test-parent-event-id")
+                                .factKey("test-parent-key")
+                                .build()
+                        )
                         .origin("test-origin")
                         .createdAt(ImmutableTimestamp.builder().s(1).n(2).build())
                         .finishedAt(ImmutableTimestamp.builder().s(3).n(4).build())
@@ -95,6 +101,8 @@ public class TrackEventsRequestTest {
                                                 .build()
                                 )).build())
                         .fact(ImmutableFactForm.builder()
+                                .platform("jenkins")
+                                .event("pipeline")
                                 .key("test-fact-key")
                                 .name("test-fact-name")
                                 .payload(ImmutableFactPayloadForm.builder()

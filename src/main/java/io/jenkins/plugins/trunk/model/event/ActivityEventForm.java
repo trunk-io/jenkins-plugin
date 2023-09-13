@@ -8,14 +8,10 @@ import org.immutables.value.Value;
 public interface ActivityEventForm {
     String id();
 
-    String platform();
-
-    String event();
+    @Nullable
+    ActivityEventParent parent();
 
     String chainId();
-
-    @Nullable
-    String parentId();
 
     String origin();
 
