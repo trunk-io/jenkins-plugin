@@ -24,5 +24,5 @@ public interface ActivityEventForm {
 
     ActivityPayloadForm payload();
 
-    FactForm fact();
+    SequenceForm sequence();
 }

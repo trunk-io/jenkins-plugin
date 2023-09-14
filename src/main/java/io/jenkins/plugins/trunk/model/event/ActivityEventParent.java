@@ -6,5 +6,5 @@ import org.immutables.value.Value;
 public interface ActivityEventParent {
     String eventId();
 
-    String factKey();
+    String sequenceKey();
 }
