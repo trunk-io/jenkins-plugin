@@ -3,9 +3,9 @@ package io.jenkins.plugins.trunk.model.event;
 import org.immutables.value.Value;
 
 @Value.Immutable
-public interface ActivityIntegerTagForm {
-    static ActivityIntegerTagForm make(String k, long v) {
-        return ImmutableActivityIntegerTagForm.builder()
+public interface ActivityTagForm {
+    static ActivityTagForm make(String k, String v) {
+        return ImmutableActivityTagForm.builder()
                 .k(k)
                 .v(v)
                 .build();
@@ -13,5 +13,5 @@ public interface ActivityIntegerTagForm {
 
     String k();
 
-    long v();
+    String v();
 }
