@@ -6,7 +6,7 @@ import org.immutables.value.Value;
 import java.util.List;
 
 @Value.Immutable
-public interface FactPayloadForm {
+public interface SequencePayloadForm {
     @Nullable
     List<ActivityTagForm> tags();
 }

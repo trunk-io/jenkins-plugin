@@ -1,7 +1,6 @@
 package io.jenkins.plugins.trunk.model.service;
 
 import com.google.gson.GsonBuilder;
-import io.jenkins.plugins.trunk.model.ImmutableTimestamp;
 import io.jenkins.plugins.trunk.model.Repo;
 import io.jenkins.plugins.trunk.model.event.*;
 import org.junit.Test;
@@ -21,19 +20,14 @@ public class TrackEventsRequestTest {
             "  \"events\": [\n" +
             "    {\n" +
             "      \"id\": \"test-event-id\",\n" +
-            "      \"platform\": \"jenkins\",\n" +
-            "      \"event\": \"pipeline\",\n" +
+            "      \"parent\": {\n" +
+            "        \"eventId\": \"test-parent-event-id\",\n" +
+            "        \"sequenceKey\": \"test-parent-key\"\n" +
+            "      },\n" +
             "      \"chainId\": \"test-chain-id\",\n" +
-            "      \"parentId\": \"test-parent-id\",\n" +
             "      \"origin\": \"test-origin\",\n" +
-            "      \"createdAt\": {\n" +
-            "        \"s\": 1,\n" +
-            "        \"n\": 2\n" +
-            "      },\n" +
-            "      \"finishedAt\": {\n" +
-            "        \"s\": 3,\n" +
-            "        \"n\": 4\n" +
-            "      },\n" +
+            "      \"createdAt\": 1,\n" +
+            "      \"finishedAt\": 2,\n" +
             "      \"conclusion\": \"SUCCESS\",\n" +
             "      \"payload\": {\n" +
             "        \"metrics\": [\n" +
@@ -49,14 +43,16 @@ public class TrackEventsRequestTest {
             "          }\n" +
             "        ]\n" +
             "      },\n" +
-            "      \"fact\": {\n" +
-            "        \"key\": \"test-fact-key\",\n" +
-            "        \"name\": \"test-fact-name\",\n" +
+            "      \"sequence\": {\n" +
+            "        \"platform\": \"jenkins\",\n" +
+            "        \"kind\": \"pipeline\",\n" +
+            "        \"key\": \"test-sequence-key\",\n" +
+            "        \"name\": \"test-sequence-name\",\n" +
             "        \"payload\": {\n" +
             "          \"tags\": [\n" +
             "            {\n" +
-            "              \"k\": \"test-fact-tag-key\",\n" +
-            "              \"v\": \"test-fact-tag-value\"\n" +
+            "              \"k\": \"test-sequence-tag-key\",\n" +
+            "              \"v\": \"test-sequence-tag-value\"\n" +
             "            }\n" +
             "          ]\n" +
             "        }\n" +
@@ -73,13 +69,16 @@ public class TrackEventsRequestTest {
                 Repo.fromGitUrl("https://github.com/trunk-io/jenkins-plugin.git"),
                 ImmutableActivityEventForm.builder()
                         .id("test-event-id")
-                        .platform("jenkins")
-                        .event("pipeline")
                         .chainId("test-chain-id")
-                        .parentId("test-parent-id")
+                        .parent(ImmutableActivityEventParent
+                                .builder()
+                                .eventId("test-parent-event-id")
+                                .sequenceKey("test-parent-key")
+                                .build()
+                        )
                         .origin("test-origin")
-                        .createdAt(ImmutableTimestamp.builder().s(1).n(2).build())
-                        .finishedAt(ImmutableTimestamp.builder().s(3).n(4).build())
+                        .createdAt(1L)
+                        .finishedAt(2L)
                         .conclusion(ActivityConclusion.SUCCESS)
                         .payload(ImmutableActivityPayloadForm.builder()
                                 .metrics(List.of(
@@ -94,14 +93,16 @@ public class TrackEventsRequestTest {
                                                 .v("test-tag-value")
                                                 .build()
                                 )).build())
-                        .fact(ImmutableFactForm.builder()
-                                .key("test-fact-key")
-                                .name("test-fact-name")
-                                .payload(ImmutableFactPayloadForm.builder()
+                        .sequence(ImmutableSequenceForm.builder()
+                                .platform("jenkins")
+                                .kind("pipeline")
+                                .key("test-sequence-key")
+                                .name("test-sequence-name")
+                                .payload(ImmutableSequencePayloadForm.builder()
                                         .tags(List.of(
                                                 ImmutableActivityTagForm.builder()
-                                                        .k("test-fact-tag-key")
-                                                        .v("test-fact-tag-value")
+                                                        .k("test-sequence-tag-key")
+                                                        .v("test-sequence-tag-value")
                                                         .build()
                                         )).build())
                                 .build())
