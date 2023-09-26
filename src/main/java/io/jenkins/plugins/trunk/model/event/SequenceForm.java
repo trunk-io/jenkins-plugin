@@ -6,7 +6,7 @@ import org.immutables.value.Value;
 public interface SequenceForm {
     String platform();
 
-    String event();
+    String kind();
 
     String key();
 

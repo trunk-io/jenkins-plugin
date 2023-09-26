@@ -1,7 +1,6 @@
 package io.jenkins.plugins.trunk.model.service;
 
 import com.google.gson.GsonBuilder;
-import io.jenkins.plugins.trunk.model.ImmutableTimestamp;
 import io.jenkins.plugins.trunk.model.Repo;
 import io.jenkins.plugins.trunk.model.event.*;
 import org.junit.Test;
@@ -27,14 +26,8 @@ public class TrackEventsRequestTest {
             "      },\n" +
             "      \"chainId\": \"test-chain-id\",\n" +
             "      \"origin\": \"test-origin\",\n" +
-            "      \"createdAt\": {\n" +
-            "        \"s\": 1,\n" +
-            "        \"n\": 2\n" +
-            "      },\n" +
-            "      \"finishedAt\": {\n" +
-            "        \"s\": 3,\n" +
-            "        \"n\": 4\n" +
-            "      },\n" +
+            "      \"createdAt\": 1,\n" +
+            "      \"finishedAt\": 2,\n" +
             "      \"conclusion\": \"SUCCESS\",\n" +
             "      \"payload\": {\n" +
             "        \"metrics\": [\n" +
@@ -52,7 +45,7 @@ public class TrackEventsRequestTest {
             "      },\n" +
             "      \"sequence\": {\n" +
             "        \"platform\": \"jenkins\",\n" +
-            "        \"event\": \"pipeline\",\n" +
+            "        \"kind\": \"pipeline\",\n" +
             "        \"key\": \"test-sequence-key\",\n" +
             "        \"name\": \"test-sequence-name\",\n" +
             "        \"payload\": {\n" +
@@ -84,8 +77,8 @@ public class TrackEventsRequestTest {
                                 .build()
                         )
                         .origin("test-origin")
-                        .createdAt(ImmutableTimestamp.builder().s(1).n(2).build())
-                        .finishedAt(ImmutableTimestamp.builder().s(3).n(4).build())
+                        .createdAt(1L)
+                        .finishedAt(2L)
                         .conclusion(ActivityConclusion.SUCCESS)
                         .payload(ImmutableActivityPayloadForm.builder()
                                 .metrics(List.of(
@@ -102,7 +95,7 @@ public class TrackEventsRequestTest {
                                 )).build())
                         .sequence(ImmutableSequenceForm.builder()
                                 .platform("jenkins")
-                                .event("pipeline")
+                                .kind("pipeline")
                                 .key("test-sequence-key")
                                 .name("test-sequence-name")
                                 .payload(ImmutableSequencePayloadForm.builder()
