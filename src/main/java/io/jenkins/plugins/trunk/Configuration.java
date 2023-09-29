@@ -12,6 +12,7 @@ import org.kohsuke.stapler.StaplerRequest;
 public class Configuration extends GlobalConfiguration {
     public String trunkApi;
     public boolean enableDebugLogging;
+    public String tokenSecretName;
 
     public Configuration() {
         load();
