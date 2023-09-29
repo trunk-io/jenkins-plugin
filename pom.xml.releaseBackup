@@ -42,7 +42,7 @@
     </developers>
 
     <properties>
-        <revision>1.5.0</revision>
+        <revision>1.4.1</revision>
         <changelist>-SNAPSHOT</changelist>
         <jenkins.version>2.387.3</jenkins.version>
         <enforcer.skip>true</enforcer.skip>
